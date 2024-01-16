@@ -10,7 +10,9 @@ TIME_OUT_SEC = 5
 
 
 
-def updateLabel_powinfos():
+def update_powdata(): # requête vers inverter avec gestion exeption\
+                       # au cas où échec de connection. \
+                       # timout configurable
     try:
         res=requests.get(URL_FRONIUS_METER, timeout=TIME_OUT_SEC)
     except Exception:
@@ -19,9 +21,9 @@ def updateLabel_powinfos():
         json_brut=res.json() # json_brut est un dictionnaire...
         data_elec=json_brut["Body"]["Data"]["1"] # on vient chercher le dictionnaire '1'
         # du dictionnaire 'Data' du dictionnaire 'body' du fichier json brut...
-        PageData.pow_tot=data_elec["PowerReal_P_Sum"]
-    finally: 
-        win_home.label_powtot.config(text="Puissance totale : "+str(PageData.pow_tot)+"W")
+        PageData.pow_tot=data_elec["PowerReal_P_Sum"] 
+    finally:
+        win_home.update_powdata()
         
 	
 def UpdateLabel_TempoEDF():
@@ -33,14 +35,12 @@ def UpdateSystemManager():
 def UpdateLabel_Clim():
 	pass
 
-def UpdateTime():
-	win_home.after(UPDATE_TIME_PER ,UpdateTime)
+def updatetimedata():
+	win_home.after(UPDATE_TIME_PER ,updatetimedata)
 	PageData.time_hour=strftime('%H:%M:%S')
 	PageData.time_date=strftime('%A %d %b %Y')
 	PageData.time_dateSTM32=strftime("%d/%b/%Y")
-	win_home.label_date.config(text=PageData.time_date) # .config permet de modifier
-	# les options d'un widget, indispensable donc !
-	win_home.label_hour.config(text=PageData.time_hour)
+	win_home.update_time()
 
 
 	   
@@ -50,10 +50,9 @@ def UpdateTime():
 
 # Genération de la fenêtre principale
 win_home = HomePage()
-
-updateLabel_powinfos() # test-----
+update_powdata()
 # Lancement Horloge
-UpdateTime()
+updatetimedata()
 
 
 # entrée dans la boucle infinie. Attente des évènements souris

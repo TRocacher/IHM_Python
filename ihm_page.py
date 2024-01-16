@@ -17,7 +17,7 @@ class HomePage(tk.Tk):
     POSY_FRAME_POW_PIX = 100
     COULOUR_FRAME = '#B9C8DF'
     
-    # ===constructeur===
+    # =====================constructeur=================================
     def __init__(self):
         tk.Tk.__init__(self)
         # --Fenêtre principale--
@@ -54,16 +54,41 @@ class HomePage(tk.Tk):
         self.frame_pow.place(x=self.POSX_FRAME_POW_PIX,\
         y=self.POSY_FRAME_POW_PIX)
         self.label_powtot=tk.Label(self.frame_pow, \
-        text="Puissance totale : "+str(PageData.pow_tot))
+        text="Puissance totale : "+str(PageData.pow_tot)+"W")
         self.label_powtot.pack()
+ 
+ 
+ 
+ 
+ 
+ 
         
-    # ===Méthode d'instance===
+    # ========================Méthode d'instance========================
     def update_time(self):
         self.label_date.config(text=PageData.time_date)
         # .config permet de modifier les options d'un widget en cours
         self.label_hour.config(text=PageData.time_hour)
 
-    # ===Les callbacks des widgets, méthodes===
+    def update_powdata(self):
+        self.label_powtot.config(\
+        text="Puissance totale : "+str(PageData.pow_tot)+"W")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # =============Les callbacks des widgets, méthodes==================
 
     def butparam_callback(self):
         win_param=tk.Toplevel(self)
@@ -91,16 +116,20 @@ class HomePage(tk.Tk):
 
 
 
-
+    # =================== Test unitaire=================================
 
   
 if __name__ == "__main__" :
     # === Genération de la fenêtre principale ===
     win_home = HomePage()
+    PageData.time_date = "Lundi 4/07/1973"
+    PageData.time_hour = "01:34:56"
+    PageData.pow_tot=1500.2
+    win_home.update_powdata()
+    win_home.update_time()
     win_home.mainloop()
-
+    
 
 
 
 	 
-
