@@ -11,11 +11,12 @@ import tkinter as tk  # tk est l'alias du module tkinder
 
 
 class HomePage(tk.Tk): 
-    LARG_FRAME_POW_PIX = 200
-    HAUT_FRAME_POW_PIX = 100
+    LARG_FRAME_POW_PIX = 250
+    HAUT_FRAME_POW_PIX = 200
     POSX_FRAME_POW_PIX = 20
     POSY_FRAME_POW_PIX = 100
-    COULOUR_FRAME = '#B9C8DF'
+    COULOUR_FRAME = '#C0C0C0'
+    
     
     # =====================constructeur=================================
     def __init__(self):
@@ -48,16 +49,27 @@ class HomePage(tk.Tk):
         self.label_hour.place(x=400, y=100) 
         
         # --Affichage infos puissance --
+        # Puissance totale
         self.frame_pow = tk.Frame(self, width=self.LARG_FRAME_POW_PIX, \
         height=self.HAUT_FRAME_POW_PIX, borderwidth=3,  \
         bg=self.COULOUR_FRAME)
         self.frame_pow.place(x=self.POSX_FRAME_POW_PIX,\
         y=self.POSY_FRAME_POW_PIX)
         self.label_powtot=tk.Label(self.frame_pow, \
-        text="Puissance totale : "+str(PageData.pow_tot)+"W")
-        self.label_powtot.pack()
- 
- 
+        text="Puissance totale : "+str(PageData.pow_tot)+"W",\
+        bg=self.COULOUR_FRAME)
+        self.label_powtot.place(x=10, y=5)
+        # Puissance onduleur
+        self.label_powinv=tk.Label(self.frame_pow, \
+        text="Puissance onduleur : "+str(PageData.pow_inv)+"W",\
+        bg=self.COULOUR_FRAME)
+        self.label_powinv.place(x=10, y=25)
+        # Puissance L1 Home 
+        self.label_powl1home=tk.Label(self.frame_pow, \
+        text="Puissance L1 maison : "+str(PageData.pow_l1home)+"W",\
+        bg=self.COULOUR_FRAME)
+        self.label_powl1home.place(x=10, y=45)       
+
  
  
  
@@ -72,6 +84,10 @@ class HomePage(tk.Tk):
     def update_powdata(self):
         self.label_powtot.config(\
         text="Puissance totale : "+str(PageData.pow_tot)+"W")
+        self.label_powinv.config(\
+        text="Puissance onduleur : "+str(PageData.pow_inv)+"W")
+        self.label_powl1home.config(\
+        text="Puissance L1 maison : "+str(PageData.pow_l1home)+"W")
 
 
 
@@ -125,6 +141,8 @@ if __name__ == "__main__" :
     PageData.time_date = "Lundi 4/07/1973"
     PageData.time_hour = "01:34:56"
     PageData.pow_tot=1500.2
+    PageData.pow_inv=1800.2
+    PageData.pow_l1home=2800.2
     win_home.update_powdata()
     win_home.update_time()
     win_home.mainloop()

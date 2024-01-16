@@ -31,7 +31,7 @@ class HomePageData:
         # -- Infos puissance --
         self.pow_tot = 0.0 # float W
         self.pow_inv = 0.0 # float W
-        self.pow_l1_home = 0.0 # float W
+        self.pow_l1home = 0.0 # float W
         self.pow_l1 = 0.0 # float W
         self.pow_l2 = 0.0 # float W
         self.pow_l3 = 0.0 # float W
