@@ -8,21 +8,8 @@ URL_FRONIUS_METER = 'http://192.168.0.11/solar_api/v1/GetMeterRealtimeData.cgi?S
 TIME_OUT_SEC = 5
 
 
-
-
-def updateLabel_powinfos():
-    try:
-        res=requests.get(URL_FRONIUS_METER, timeout=TIME_OUT_SEC)
-    except Exception:
-        PageData.pow_tot=50000.0
-    else:
-        json_brut=res.json() # json_brut est un dictionnaire...
-        data_elec=json_brut["Body"]["Data"]["1"] # on vient chercher le dictionnaire '1'
-        # du dictionnaire 'Data' du dictionnaire 'body' du fichier json brut...
-        PageData.pow_tot=data_elec["PowerReal_P_Sum"]
-    finally: 
-        win_home.label_powtot.config(text="Puissance totale : "+str(PageData.pow_tot)+"W")
-        
+def UpdateLabel_PowInfos():
+	pass
 	
 def UpdateLabel_TempoEDF():
 	pass
@@ -51,7 +38,7 @@ def UpdateTime():
 # Genération de la fenêtre principale
 win_home = HomePage()
 
-updateLabel_powinfos() # test-----
+
 # Lancement Horloge
 UpdateTime()
 

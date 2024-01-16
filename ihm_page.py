@@ -11,10 +11,16 @@ import tkinter as tk  # tk est l'alias du module tkinder
 
 
 class HomePage(tk.Tk): 
+    LARG_FRAME_POW_PIX = 200
+    HAUT_FRAME_POW_PIX = 100
+    POSX_FRAME_POW_PIX = 20
+    POSY_FRAME_POW_PIX = 100
+    COULOUR_FRAME = '#B9C8DF'
+    
     # ===constructeur===
     def __init__(self):
         tk.Tk.__init__(self)
-        #- -Fenêtre principale--
+        # --Fenêtre principale--
         self.geometry("800x480+0+0")  # taille en pixels
         self.resizable(width=0, height=0)
         self.title("Home") 
@@ -41,8 +47,21 @@ class HomePage(tk.Tk):
                                    width=30, height=1)
         self.label_hour.place(x=400, y=100) 
         
-
-
+        # --Affichage infos puissance --
+        self.frame_pow = tk.Frame(self, width=self.LARG_FRAME_POW_PIX, \
+        height=self.HAUT_FRAME_POW_PIX, borderwidth=3,  \
+        bg=self.COULOUR_FRAME)
+        self.frame_pow.place(x=self.POSX_FRAME_POW_PIX,\
+        y=self.POSY_FRAME_POW_PIX)
+        self.label_powtot=tk.Label(self.frame_pow, \
+        text="Puissance totale : "+str(PageData.pow_tot))
+        self.label_powtot.pack()
+        
+    # ===Méthode d'instance===
+    def update_time(self):
+        self.label_date.config(text=PageData.time_date)
+        # .config permet de modifier les options d'un widget en cours
+        self.label_hour.config(text=PageData.time_hour)
 
     # ===Les callbacks des widgets, méthodes===
 
@@ -70,13 +89,14 @@ class HomePage(tk.Tk):
         win_diag.grab_set() 
 
 
-# === Genération de la fenêtre principale ===
-win_home = HomePage()
+
 
 
 
   
 if __name__ == "__main__" :
+    # === Genération de la fenêtre principale ===
+    win_home = HomePage()
     win_home.mainloop()
 
 
