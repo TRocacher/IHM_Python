@@ -1,0 +1,12 @@
+Ajouter une ligne en bas de la home page pour afficher ce qu'il se pass
+genre req HTTP, Echange UART..
+
+Revoir le 50000 en cas de mauvaise requête : il suffit de détecter
+cette valeur dans la méthode update pour affecter une chaîne originale
+genre : pas d'accès onduleur
+
+Penser le protocole UART en requ/réponse, IHM maître
+Et mettre en place la communication Gateway-IHM qu'on va renommer
+SystManager-IHM
+
+Poursuivre l'interface homePage
