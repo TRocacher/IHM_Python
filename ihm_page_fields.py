@@ -36,6 +36,7 @@ class HomePageData:
         self.pow_l2 = 0.0 # float W
         self.pow_l3 = 0.0 # float W
         self.pow_dispo = 0.0 # float W
+        self.pow_temoin ="red"
         # -- Infos date/heure --
         self.time_dateSTM32 = "00/00/00" # string ex 01/01/20	
         self.time_date = "JourSemaine Jour mois année" 
@@ -69,7 +70,7 @@ class HomePageData:
 # Création des datas associées à la fenêtre
 PageData=HomePageData()
 
-  
+# =================== Test unitaire=================================  
 if __name__ == "__main__" :
     MyPage=HomePageData()
     print(MyPage.mode)

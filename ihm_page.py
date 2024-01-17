@@ -6,13 +6,12 @@ import tkinter as tk  # tk est l'alias du module tkinder
 # on aurait pu faire "from tkinder import Tk".
 # Tk est la classe permettant de faire des fenêtres
 
-   
 
 
 
 class HomePage(tk.Tk): 
     LARG_FRAME_POW_PIX = 250
-    HAUT_FRAME_POW_PIX = 200
+    HAUT_FRAME_POW_PIX = 135
     POSX_FRAME_POW_PIX = 20
     POSY_FRAME_POW_PIX = 100
     COULOUR_FRAME = '#C0C0C0'
@@ -51,27 +50,45 @@ class HomePage(tk.Tk):
         # --Affichage infos puissance --
         # Puissance totale
         self.frame_pow = tk.Frame(self, width=self.LARG_FRAME_POW_PIX, \
-        height=self.HAUT_FRAME_POW_PIX, borderwidth=3,  \
-        bg=self.COULOUR_FRAME)
+            height=self.HAUT_FRAME_POW_PIX, borderwidth=3,  \
+            bg=self.COULOUR_FRAME)
         self.frame_pow.place(x=self.POSX_FRAME_POW_PIX,\
-        y=self.POSY_FRAME_POW_PIX)
+            y=self.POSY_FRAME_POW_PIX)
         self.label_powtot=tk.Label(self.frame_pow, \
-        text="Puissance totale : "+str(PageData.pow_tot)+"W",\
-        bg=self.COULOUR_FRAME)
+            text="Puissance totale : "+str(PageData.pow_tot)+"W",\
+            bg=self.COULOUR_FRAME)
         self.label_powtot.place(x=10, y=5)
         # Puissance onduleur
         self.label_powinv=tk.Label(self.frame_pow, \
-        text="Puissance onduleur : "+str(PageData.pow_inv)+"W",\
-        bg=self.COULOUR_FRAME)
+            text="Puissance onduleur : "+str(PageData.pow_inv)+"W",\
+            bg=self.COULOUR_FRAME)
         self.label_powinv.place(x=10, y=25)
         # Puissance L1 Home 
         self.label_powl1home=tk.Label(self.frame_pow, \
-        text="Puissance L1 maison : "+str(PageData.pow_l1home)+"W",\
-        bg=self.COULOUR_FRAME)
+            text="Puissance L1 maison : "+str(PageData.pow_l1home)+"W",\
+            bg=self.COULOUR_FRAME)
         self.label_powl1home.place(x=10, y=45)       
-
- 
- 
+        # Puissance L1 
+        self.label_powl1=tk.Label(self.frame_pow, \
+            text="Puissance L1  : "+str(PageData.pow_l1)+"W",\
+            bg=self.COULOUR_FRAME)
+        self.label_powl1.place(x=10, y=65) 
+        # Puissance L2 
+        self.label_powl2=tk.Label(self.frame_pow, \
+            text="Puissance L2  : "+str(PageData.pow_l2)+"W",\
+            bg=self.COULOUR_FRAME)
+        self.label_powl2.place(x=10, y=85) 
+        # Puissance L3 
+        self.label_powl3=tk.Label(self.frame_pow, \
+            text="Puissance L3  : "+str(PageData.pow_l3)+"W",\
+            bg=self.COULOUR_FRAME)
+        self.label_powl3.place(x=10, y=105) 
+        # Temoin de consommation
+        self.temoin_pow=tk.Canvas(self.frame_pow, bg=self.COULOUR_FRAME,\
+            height=24, width=24,highlightthickness=0)
+        self.temoin_pow.place(x=220,y=5)
+        self.temoin=self.temoin_pow.create_oval(2,2,22,22,fill="red")
+        
  
  
         
@@ -83,14 +100,25 @@ class HomePage(tk.Tk):
 
     def update_powdata(self):
         self.label_powtot.config(\
-        text="Puissance totale : "+str(PageData.pow_tot)+"W")
+                                text="Puissance totale : "\
+                                +str(PageData.pow_tot)+"W")
         self.label_powinv.config(\
-        text="Puissance onduleur : "+str(PageData.pow_inv)+"W")
+                                text="Puissance onduleur : "\
+                                +str(PageData.pow_inv)+"W")
         self.label_powl1home.config(\
-        text="Puissance L1 maison : "+str(PageData.pow_l1home)+"W")
-
-
-
+                                text="Puissance L1 maison : "\
+                                +str(PageData.pow_l1home)+"W")
+        self.label_powl1.config(\
+                                text="Puissance L1 : "\
+                                +str(PageData.pow_l1)+"W")
+        self.label_powl2.config(\
+                                text="Puissance L2 : "\
+                                +str(PageData.pow_l2)+"W")
+        self.label_powl3.config(\
+                                text="Puissance L3 : "\
+                                +str(PageData.pow_l3)+"W")
+        self.temoin_pow.itemconfig(\
+                                self.temoin,fill=PageData.pow_temoin)
 
 
 
@@ -132,7 +160,7 @@ class HomePage(tk.Tk):
 
 
 
-    # =================== Test unitaire=================================
+# =================== Test unitaire=================================
 
   
 if __name__ == "__main__" :
@@ -143,8 +171,17 @@ if __name__ == "__main__" :
     PageData.pow_tot=1500.2
     PageData.pow_inv=1800.2
     PageData.pow_l1home=2800.2
+    PageData.pow_l1=2801.2
+    PageData.pow_l2=2802.2
+    PageData.pow_l3=2803.2
     win_home.update_powdata()
     win_home.update_time()
+    
+    
+  
+    win_home.temoin_pow.itemconfig(win_home.temoin,fill="green")
+    
+    
     win_home.mainloop()
     
 
