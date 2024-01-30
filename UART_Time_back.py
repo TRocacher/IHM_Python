@@ -25,17 +25,15 @@ print(Year)
 
 
 #élaboration trame byte sans checksum
-Trame_H = st.pack("<HHH",Sec,Min,Hour)
-Trame_D = st.pack("<HHH",Day,Month,Year)
+Trame_H = st.pack("<BBBB",8,Sec,Min,Hour)
+Trame_D = st.pack("<BBH",Day,Month,Year)
 Trame=Trame_H+Trame_D
 
-L=len(Trame)+1 # on inclut le checksum
-Trame_L=st.pack("<B",L)
-Trame=Trame_L+Trame # Trame =|L|...data...|
-                    #        |0  ....  L-1|
+print(len(Trame))
 #calcul checksum
 Sum=0
-for i in range(0,L): # de 0 à L exclu
+#for i in range(0,(len(Trame)-1)):
+for i in range(0,8):
     Sum=Sum+Trame[i]
 
     
@@ -46,7 +44,12 @@ print(Sum)
 Trame_Sum=st.pack("<B",Sum)
 Trame=Trame+Trame_Sum
 ser.write(Trame) 
-
+print("dans le détail")
+Sum=0
+for i in range(0,8):
+    print(Trame[i])
+    Sum=Sum+Trame[i]
+    print(Sum)
 
 
 

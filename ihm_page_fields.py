@@ -8,7 +8,7 @@ class Climatisation:
         
         # -- date/heure dernier relevé/set --
         self.time_date = "00/00/00" # string ex 01/01/20	
-        self.time_hour = "00:00:00" # string ex 12:48:51  
+        self.time_hour = "00:+00:00" # string ex 12:48:51  
         # -- données de température locale --
         self.temp_mesuree = 0.0 # float °C
         self.temp_set = 0.0 # float °C

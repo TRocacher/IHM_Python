@@ -1,3 +1,6 @@
+# ATTENTION PLANTAGE si erreur d'adressage IP 10 et pas 11 ou l'inverse
+# le try catch doit être amélioré
+
 from ihm_page import HomePage
 from ihm_page_fields import *
 from time import strftime
@@ -6,8 +9,8 @@ import requests
 
 UPDATE_TIME_PER = 1000
 UPDATE_POW_PER = 60000
-URL_FRONIUS_METER = 'http://192.168.0.11/solar_api/v1/GetMeterRealtimeData.cgi?Scope=System'
-URL_FRONIUS_INVERTER= 'http://192.168.0.11/solar_api/v1/GetInverterRealtimeData.cgi?Scope=System&DataCollection=CumulationInverterData'
+URL_FRONIUS_METER = 'http://192.168.0.10/solar_api/v1/GetMeterRealtimeData.cgi?Scope=System'
+URL_FRONIUS_INVERTER= 'http://192.168.0.10/solar_api/v1/GetInverterRealtimeData.cgi?Scope=System&DataCollection=CumulationInverterData'
 TIME_OUT_SEC = 5
 
 
@@ -55,10 +58,10 @@ def updatepowdata(): # requête vers inverter avec gestion exeption\
         win_home.update_powdata()
         
 	
-def UpdateLabel_TempoEDF():
+def updatelabel_tempoEDF():
 	pass
 	
-def UpdateSystemManager():
+def transaction_SGw():
 	pass
 	
 def UpdateLabel_Clim():
@@ -68,7 +71,7 @@ def updatetimedata():
 	win_home.after(UPDATE_TIME_PER ,updatetimedata)
 	PageData.time_hour=strftime('%H:%M:%S')
 	PageData.time_date=strftime('%A %d %b %Y')
-	PageData.time_dateSTM32=strftime("%d/%b/%Y")
+	PageData.time_dateSTM32=strftime("%d/%m/%Y")
 	win_home.update_time()
 
 
