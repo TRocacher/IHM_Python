@@ -13,14 +13,14 @@ class Climatisation:
         self.temp_mesuree = 0.0 # float °C
         self.temp_set = 0.0 # float °C
         
-
+        
 
 # === classe qui regroupe les variables de la homepage ===
 
 class HomePageData:
     
 
-	# ==== les attribut de la Home Page ===
+        # ==== les attribut de la Home Page ===
     def __init__(self):
         # -- Mode --
         self.mode = "Off" # string Choix possibles "Off" "Auto", "Eco", 
@@ -67,8 +67,34 @@ class HomePageData:
         self.ClimSalon=Climatisation("Entree")
         self.ClimSalon=Climatisation("Couloir")
 
+
+class ParamPageAutoModeData:
+    def __init__(self):
+        self.temp_min_ext=12
+        self.pow_excess_start=500
+        self.pow_excess_stop=0
+        self.clim_prio=[1,2,3,4]
+        self.temp_min_HC=18
+        self.temp_min_HP=19
+        
+    def update(self,tempminext,powexcessstart,powerexcessstop, \
+        climprio,tempminhc,tempminhp):
+        self.temp_min_ext = tempminext
+        self.pow_excess_start = powexcessstart
+        self.pow_excess_stop = powerexcessstop
+        self.clim_prio = climprio
+        self.temp_min_HC = tempminhc
+        self.temp_min_HP = tempminhp
+
+
+        
+        
+
 # Création des datas associées à la fenêtre
 PageData=HomePageData()
+AutoModeDataBlue=ParamPageAutoModeData()
+AutoModeDataWhite=ParamPageAutoModeData()
+AutoModeDataRed=ParamPageAutoModeData()
 
 # =================== Test unitaire=================================  
 if __name__ == "__main__" :

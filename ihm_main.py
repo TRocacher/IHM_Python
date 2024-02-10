@@ -1,7 +1,7 @@
 # ATTENTION PLANTAGE si erreur d'adressage IP 10 et pas 11 ou l'inverse
 # le try catch doit être amélioré
 
-from ihm_page import HomePage
+from ihm_page_home import HomePage
 from ihm_page_fields import *
 from time import strftime
 import tkinter as tk
