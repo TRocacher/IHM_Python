@@ -1,3 +1,5 @@
+from IHM_Global import *
+
 # === classe qui permettra d'instancier les 4 clim de la maison ===
 class Climatisation:
     
@@ -17,14 +19,18 @@ class Climatisation:
 
 # === classe qui regroupe les variables de la homepage ===
 
-class HomePageData:
+class DataHomePage:
     
 
         # ==== les attribut de la Home Page ===
     def __init__(self):
         # -- Mode --
-        self.mode = "Off" # string Choix possibles "Off" "Auto", "Eco", 
-        # "Vacances"
+        self.mode = HMI_Mode_Auto # string Choix possibles "Off" "Auto", "Eco", 
+        # -- Tempo --
+        self.tempo = Tempo_NoConnection
+        self.tempostring=["Pb internet","Bleu","Blanc","Rouge"]
+        self.tempobg=[COLOUR_FRAME,COLOUR_BLUE,COLOUR_WHITE,COLOUR_RED]
+        # -- option --
         self.mode_opt_coupure_nuit = "0" # string Choix  : "0", "1"
         self.mode_opt_prioVE = "0" # string Choix : "0", "1"
         self.mode_opt_repeat_set = "0" # string Choix  : "0", "1"
@@ -68,7 +74,7 @@ class HomePageData:
         self.ClimSalon=Climatisation("Couloir")
 
 
-class ParamPageAutoModeData:
+class DataParamAuto:
     def __init__(self):
         self.temp_min_ext=12
         self.pow_excess_start=500
@@ -78,29 +84,29 @@ class ParamPageAutoModeData:
         self.temp_min_HP=19
         
     def update(self,tempminext,powexcessstart,powerexcessstop, \
-        climprio,tempminhc,tempminhp):
+        tempminhc,tempminhp,climprio):
         self.temp_min_ext = tempminext
         self.pow_excess_start = powexcessstart
         self.pow_excess_stop = powerexcessstop
-        self.clim_prio = climprio
         self.temp_min_HC = tempminhc
         self.temp_min_HP = tempminhp
+        self.clim_prio = climprio
 
 
         
-        
+
 
 # Création des datas associées à la fenêtre
-PageData=HomePageData()
-AutoModeDataBlue=ParamPageAutoModeData()
-AutoModeDataWhite=ParamPageAutoModeData()
-AutoModeDataRed=ParamPageAutoModeData()
+data_homepage=DataHomePage()
+data_automode_blue=DataParamAuto()
+data_automode_white=DataParamAuto()
+data_automode_red=DataParamAuto()
 
 # =================== Test unitaire=================================  
 if __name__ == "__main__" :
-    MyPage=HomePageData()
+    MyPage=DataHomePage()
     print(MyPage.mode)
-    MyPage.mode="Auto"
+    MyPage.mode=HMI_Mode_Off
     print(MyPage.mode)
     print(MyPage.ClimSalon.id)
 
