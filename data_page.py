@@ -31,9 +31,9 @@ class DataHomePage:
         self.tempostring=["Pb internet","Bleu","Blanc","Rouge"]
         self.tempobg=[COLOUR_FRAME,COLOUR_BLUE,COLOUR_WHITE,COLOUR_RED]
         # -- option --
-        self.mode_opt_coupure_nuit = "0" # string Choix  : "0", "1"
-        self.mode_opt_prioVE = "0" # string Choix : "0", "1"
-        self.mode_opt_repeat_set = "0" # string Choix  : "0", "1"
+        self.mode_opt_coupure_nuit = 0
+        self.mode_opt_prioVE = 0
+        self.mode_opt_repeat_set = 0
         # -- Infos puissance --
         self.pow_tot = 0.0 # float W
         self.pow_inv = 0.0 # float W
@@ -44,29 +44,25 @@ class DataHomePage:
         self.pow_dispo = 0.0 # float W
         self.pow_temoin ="red"
         # -- Infos date/heure --
-        self.time_dateSTM32 = "00/00/00" # string ex 01/01/20	
         self.time_date = "JourSemaine Jour mois année" 
         # string ex Monday 1 Oct 2023
         self.time_hour = "00:00:00" 
         # string ex 12:48:51
-        # -- Infos enedis, météo, temp exterieur--
-        self.edf_tempo = "Bleu"
-        # string Choix possibles "Bleu" "Blanc", "Rouge"
-        self.prev_meteo = "degage" 
-        # string Choix possibles "degage", "couvert"
-        self.temp_ext = 0.0 # float °C
-        # -- Warning stème --
-        self.warning = "RAS" 
-        # string Choix possibles "RAS" "Avertissement" "Erreur"
-    
-        # ** les attribut de la page vacances **
-        self.vac_dep_date =  "00/00/00" # string ex 01/01/20	
-        self.vac_dep_hour = "00:00:00" # string ex 12:48:51 
-        self.vac_ret_date =  "00/00/00" # string ex 01/01/20	
-        self.vac_ret_hour = "00:00:00" # string ex 12:48:51 
-        self.set_temp_min = 15.0 # float °C
-        self.set_temp_ret = 19.0 # float °C  
 
+        # program, à décliner en une classe spécifique et 3 objets
+        self.TempPerHour=[18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18]   
+        
+
+        # hollidays 16 octets
+        self.Temp_ArrRedWhiteBlue = 0x12121212  # 4 octets température arrivée/rouge/blanc/bleu = 18°C pour tous
+        self.ArrivalDateSec = 0                # short int 2octets
+        self.ArrivalDateMin = 0                # short int 2octets
+        self.ArrivalDateHour = 0               # short int 2octets
+        self.ArrivalDateDay = 1                # short int 2octets
+        self.ArrivalDateMonth = 1              # short int 2octets
+        self.ArrivalDateYear = 2024            # short int 2octets    
+           
+    
         # **Définition des 4 climatisations **
         self.ClimSalon=Climatisation("Salon")
         self.ClimSalon=Climatisation("SalleAManger")

@@ -5,6 +5,7 @@ from IHM_Global import *
 from data_page import data_homepage,data_automode_blue,data_automode_white,data_automode_red
 import tkinter as tk  # tk est l'alias du module tkinder 
 
+from Serial_Interface import serial_data
 
 class PageHome(tk.Tk):
     #frame puissance 
@@ -13,8 +14,8 @@ class PageHome(tk.Tk):
     POSX_FRAME_POW_PIX = 20
     POSY_FRAME_POW_PIX = 100
     #frame mode
-    LARG_FRAME_MODE_PIX = 120
-    HAUT_FRAME_MODE_PIX = 100
+    LARG_FRAME_MODE_PIX = 190
+    HAUT_FRAME_MODE_PIX = 37
     POSX_FRAME_MODE_PIX = 500
     POSY_FRAME_MODE_PIX = 100
     #temop couleur
@@ -36,12 +37,14 @@ class PageHome(tk.Tk):
         self.menubar=tk.Menu(self,tearoff=0) # création de contenant menubar
         
             # item Mode...
+        self.mode_dictio={HMI_Mode_Off:"Arrêt",HMI_Mode_Auto:"Automatique",HMI_Mode_Program :"Programmation",HMI_Mode_Hollidays:"Vacances"}  
+       
         self.menu_mode=tk.Menu(self.menubar, tearoff=0) # création du menu paramètre, fils de menubar    
         self.menubar.add_cascade(label="Mode", menu=self.menu_mode) # placement du menu fils dans la barre de menu
-        self.menu_mode.add_command(label="Arrêt")  # ajout des sous menus
-        self.menu_mode.add_command(label="Auto")
-        self.menu_mode.add_command(label="Programmation")
-        self.menu_mode.add_command(label="Vacances")
+        self.menu_mode.add_command(label="Arrêt",command=self.updatemode_off)  # ajout des sous menus
+        self.menu_mode.add_command(label="Auto",command=self.updatemode_auto)
+        self.menu_mode.add_command(label="Programmation",command=self.updatemode_prog)
+        self.menu_mode.add_command(label="Vacances",command=self.updatemode_hollidays)
             # item Param...
         self.menu_param=tk.Menu(self.menubar, tearoff=0) # création du menu paramètre, fils de menubar  
         self.menubar.add_cascade(label="Paramètres", menu=self.menu_param) # placement du menu fils dans la barre de menu
@@ -69,7 +72,7 @@ class PageHome(tk.Tk):
         self.label_date = tk.Label(self, text=data_homepage.time_date,width=30, height=1)
         self.label_date.place(x=400, y=50) 
         self.label_hour = tk.Label(self, text=data_homepage.time_hour, width=30, height=1)
-        self.label_hour.place(x=400, y=100) 
+        self.label_hour.place(x=400, y=75) 
         
         # --Affichage infos puissance --
         self.frame_pow = tk.Frame(self, width=self.LARG_FRAME_POW_PIX, height=self.HAUT_FRAME_POW_PIX, borderwidth=3,relief='groove',bg=COLOUR_FRAME)
@@ -99,16 +102,17 @@ class PageHome(tk.Tk):
         #affichage du mode
         self.frame_mode = tk.Frame(self, width=self.LARG_FRAME_MODE_PIX, height=self.HAUT_FRAME_MODE_PIX, borderwidth=3,relief='groove',bg=COLOUR_FRAME)
         self.frame_mode.place(x=self.POSX_FRAME_MODE_PIX, y=self.POSY_FRAME_MODE_PIX)
-        self.mode=tk.IntVar(self);
-        self.mode.set(data_homepage.mode)
-        self.radiobut_mode1=tk.Radiobutton(self.frame_mode,text=" Off", variable=self.mode, \
-                        value=HMI_Mode_Off, bg=COLOUR_FRAME,highlightthickness=0, command=self.update_datapage_mode).place(x=0, y=5) 
-        self.radiobut_mode2=tk.Radiobutton(self.frame_mode,text=" Auto", variable=self.mode, \
-                        value=HMI_Mode_Auto, bg=COLOUR_FRAME,highlightthickness=0, command=self.update_datapage_mode).place(x=0, y=25) 
-        self.radiobut_mode3=tk.Radiobutton(self.frame_mode,text=" Program", variable=self.mode, \
-                        value=HMI_Mode_Program, bg=COLOUR_FRAME,highlightthickness=0, command=self.update_datapage_mode).place(x=0, y=45) 
-        self.radiobut_mode4=tk.Radiobutton(self.frame_mode,text=" Hollidays", variable=self.mode, \
-                        value=HMI_Mode_Hollidays, bg=COLOUR_FRAME,highlightthickness=0, command=self.update_datapage_mode).place(x=0, y=65) 
+        self.label_mode=tk.Label(self.frame_mode, text=" Mode  : "+ self.mode_dictio[data_homepage.mode], bg=COLOUR_FRAME)
+        self.label_mode.place(x=5, y=5) 
+        # self.mode.set(data_homepage.mode)
+        # self.radiobut_mode1=tk.Radiobutton(self.frame_mode,text=" Off", variable=self.mode, \
+                        # value=HMI_Mode_Off, bg=COLOUR_FRAME,highlightthickness=0, command=self.update_datapage_mode).place(x=0, y=5) 
+        # self.radiobut_mode2=tk.Radiobutton(self.frame_mode,text=" Auto", variable=self.mode, \
+                        # value=HMI_Mode_Auto, bg=COLOUR_FRAME,highlightthickness=0, command=self.update_datapage_mode).place(x=0, y=25) 
+        # self.radiobut_mode3=tk.Radiobutton(self.frame_mode,text=" Program", variable=self.mode, \
+                        # value=HMI_Mode_Program, bg=COLOUR_FRAME,highlightthickness=0, command=self.update_datapage_mode).place(x=0, y=45) 
+        # self.radiobut_mode4=tk.Radiobutton(self.frame_mode,text=" Hollidays", variable=self.mode, \
+                        # value=HMI_Mode_Hollidays, bg=COLOUR_FRAME,highlightthickness=0, command=self.update_datapage_mode).place(x=0, y=65) 
         
     # ======================== Méthode de mise à jour des champs de la fenêtre ... ========================
     def update_time(self):
@@ -132,10 +136,22 @@ class PageHome(tk.Tk):
     # ======================== Méthode de mise à jour de data_homepage ... ========================
     
     
-    def update_datapage_mode(self):
-        data_homepage.mode=self.mode.get()
+    def updatemode_off(self):
+        data_homepage.mode=HMI_Mode_Off #self.mode.get()
+        self.label_mode.config(text=" Mode  : "+ self.mode_dictio[data_homepage.mode])
         print(data_homepage.mode)
-
+    def updatemode_auto(self):
+        data_homepage.mode=HMI_Mode_Auto
+        self.label_mode.config(text=" Mode  : "+ self.mode_dictio[data_homepage.mode])
+        print(data_homepage.mode)
+    def updatemode_prog(self):
+        data_homepage.mode=HMI_Mode_Program
+        self.label_mode.config(text=" Mode  : "+ self.mode_dictio[data_homepage.mode])
+        print(data_homepage.mode)
+    def updatemode_hollidays(self):
+        data_homepage.mode=HMI_Mode_Hollidays
+        self.label_mode.config(text=" Mode  : "+ self.mode_dictio[data_homepage.mode])
+        print(data_homepage.mode)
 
 
 
@@ -189,7 +205,9 @@ class PageHome(tk.Tk):
                                 self.frame_auto_red.get_powexcess_stop(), 
                                 self.frame_auto_red.get_tempminHC(),
                                 self.frame_auto_red.get_tempminHP(),
-                                self.frame_auto_red.get_prioclim() )                      
+                                self.frame_auto_red.get_prioclim() )   
+                                          
+        serial_data.sendto_smartgateway()
         
 
     def butdiag_callback(self):

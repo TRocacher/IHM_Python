@@ -61,7 +61,7 @@ def updatepowdata(): # requête vers inverter avec gestion exeption\
     finally:
         win_home.update_powdata()
         
-	
+
 def updatelabel_tempoEDF():
     win_home.after(UPDATE_POW_PER ,updatelabel_tempoEDF) # modifier la période 
     try:
@@ -75,22 +75,22 @@ def updatelabel_tempoEDF():
         print(data_homepage.tempo) 
         print(data_homepage.tempostring[data_homepage.tempo]  )
         
-	
+
 def transaction_SGw():
-	pass
-	
+    pass
+    
 def UpdateLabel_Clim():
-	pass
+    pass
 
 def updatetimedata():
-	win_home.after(UPDATE_TIME_PER ,updatetimedata)
-	data_homepage.time_hour=strftime('%H:%M:%S')
-	data_homepage.time_date=strftime('%A %d %b %Y')
-	data_homepage.time_dateSTM32=strftime("%d/%m/%Y")
-	win_home.update_time()
+    win_home.after(UPDATE_TIME_PER ,updatetimedata)
+    data_homepage.time_hour=strftime('%H:%M:%S')
+    data_homepage.time_date=strftime('%A %d %b %Y')
+    data_homepage.time_dateSTM32=strftime("%d/%m/%Y")
+    win_home.update_time()
 
 
-	   
+
 
 
 # === Code principal ===
