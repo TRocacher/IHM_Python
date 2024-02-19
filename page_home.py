@@ -1,8 +1,8 @@
-from widgets_page_param import FrameModeAuto
+from widgets_page_param import FrameModeAuto, FrameModeProg
 from page_diag import *
 from IHM_Global import *
 
-from data_page import data_homepage,data_automode_blue,data_automode_white,data_automode_red
+from data_page import data_homepage,data_automode_blue,data_automode_white,data_automode_red,data_prog_blue,data_prog_white,data_prog_red
 import tkinter as tk  # tk est l'alias du module tkinder 
 
 from Serial_Interface import serial_data
@@ -49,10 +49,12 @@ class PageHome(tk.Tk):
         self.menu_param=tk.Menu(self.menubar, tearoff=0) # création du menu paramètre, fils de menubar  
         self.menubar.add_cascade(label="Paramètres", menu=self.menu_param) # placement du menu fils dans la barre de menu
         self.menu_param.add_command(label="Mode Automatique",command=self.create_win_param_auto)  # ajout des sous menus
-        self.menu_param.add_command(label="Mode Programmation")
+        self.menu_param.add_command(label="Mode Programmation",command=self.create_win_param_prog)
         self.menu_param.add_command(label="Mode Vacances")
             # item Diagnostic...
         self.menubar.add_command(label="Diagnostic",command=self.butdiag_callback) #ajout d'un autre menu simple dans la barre de menu
+            # item forcer mise à jour Gateway
+        self.menubar.add_command(label="Forcer mise à jour Gatway",command=self.maj_gateway_callback)     
             # affichage de l'ensemble du menu
         self.config(menu=self.menubar) #affichage du menu
         
@@ -163,13 +165,14 @@ class PageHome(tk.Tk):
 
 
     # =============Les callbacks des widgets, méthodes==================
-
+    
+    # **** fenêtre toplevel win_paramauto **** 
     def create_win_param_auto(self):
         #PageParamAuto(self)
         win_paramauto=tk.Toplevel(self)
         win_paramauto.geometry("800x480+0+0")   # taille en pixels
         win_paramauto.resizable(width=0, height=0)
-        win_paramauto.title("Paramètre")
+        win_paramauto.title("Paramètres mode automatique... ")
 
         win_paramauto.grab_set()    # permet à la fenêtre param de recevoir les évènements.
                                 
@@ -207,8 +210,40 @@ class PageHome(tk.Tk):
                                 self.frame_auto_red.get_tempminHP(),
                                 self.frame_auto_red.get_prioclim() )   
                                           
-        serial_data.sendto_smartgateway()
         
+        
+    # **** fenêtre toplevel win_paramauto **** 
+    def create_win_param_prog(self):
+        win_paramprog=tk.Toplevel(self)
+        win_paramprog.geometry("800x480+0+0")   # taille en pixels
+        win_paramprog.resizable(width=0, height=0)
+        win_paramprog.title("Paramètres mode programmation... ")
+
+        win_paramprog.grab_set()    # permet à la fenêtre param de recevoir les évènements.
+                                
+        # === Elaboration des Widgets de la fenêtre win_paramauto ===
+        #--top boutons--
+        button_back = tk.Button(win_paramprog, text="Retour", width=13, height=1 , command=win_paramprog.destroy)
+        button_back.place(x=5, y=0)
+        button_confirm = tk.Button(win_paramprog, text="Confirmer", width=13, height=1 , command=self.win_paramprog_confirm)
+        button_confirm.place(x=140, y=0)
+        # Les 3 frames principames de saisies param prog
+        self.frame_prog_blue=FrameModeProg(win_paramprog,16,50, "Heures bleue", COLOUR_BLUE,data_prog_blue)
+        self.frame_prog_white=FrameModeProg(win_paramprog,245+16*2,50, "Heures blanc", COLOUR_WHITE,data_prog_white)
+        self.frame_prog_red=FrameModeProg(win_paramprog,490+16*3,50, "Heures rouge",  COLOUR_RED,data_prog_red) 
+        
+        
+        
+           
+    
+    def win_paramprog_confirm(self):
+        data_prog_blue.update(self.frame_prog_blue.get_tab_temp())
+        data_prog_white.update(self.frame_prog_white.get_tab_temp())
+        data_prog_red.update(self.frame_prog_red.get_tab_temp())
+
+    def maj_gateway_callback(self):
+        serial_data.sendto_smartgateway()
+
 
     def butdiag_callback(self):
         win_diag_creation(self)

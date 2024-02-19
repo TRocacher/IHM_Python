@@ -49,8 +49,8 @@ class DataHomePage:
         self.time_hour = "00:00:00" 
         # string ex 12:48:51
 
-        # program, à décliner en une classe spécifique et 3 objets
-        self.TempPerHour=[18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18]   
+        # # program, à décliner en une classe spécifique et 3 objets
+        # self.TempPerHour=[18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18]   
         
 
         # hollidays 16 octets
@@ -89,6 +89,19 @@ class DataParamAuto:
         self.clim_prio = climprio
 
 
+
+class DataParamProg:
+    def __init__(self):
+
+        
+        #self.TempPerHour = {"6h":temp_6h,"8h":temp_8h,"10h":temp_10h,"15h":temp_10h,"17h":temp_10h,"22h":temp_22h} 
+        self.TempPerHour =[17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17]
+        
+    def update(self,temp_per_hour):
+        for i in range(0,24):
+            self.TempPerHour[i]=temp_per_hour[i]
+            
+        
         
 
 
@@ -97,6 +110,12 @@ data_homepage=DataHomePage()
 data_automode_blue=DataParamAuto()
 data_automode_white=DataParamAuto()
 data_automode_red=DataParamAuto()
+data_prog_blue = DataParamProg()
+data_prog_white = DataParamProg()
+data_prog_red = DataParamProg()
+
+
+
 
 # =================== Test unitaire=================================  
 if __name__ == "__main__" :

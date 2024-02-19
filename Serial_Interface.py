@@ -3,7 +3,7 @@
 from IHM_Global import *
 from time import strftime
 import serial
-from data_page import data_homepage,data_automode_blue,data_automode_white,data_automode_red
+from data_page import data_homepage,data_automode_blue,data_automode_white,data_automode_red,data_prog_blue,data_prog_white,data_prog_red
 import struct as st # pour envoyer float, cad d'abord passer en byte
 
 class TimeStampTypedef:
@@ -106,11 +106,12 @@ class DFH_CentralData:
         self.PowExcess = 0.0                   # float 4 octets
         self.PowL1_Home = 0.0                  # float 4 octets
         self.PowInverter = 0.0                 # float 4 octets    
-        self.Option = [0x1,0x2,0x3,0x4]     # int 4 octets (CouleurTemp|NightCut|EVChargePrio|RepeatSameSet|
+        self.Option = [0x1,0x2,0x3,0x4]     #  4 octets 
  
         # 92 octets en tout
         
-        self.serial_dataparamauto=data_automode_blue
+        self.serial_dataparamauto = data_automode_blue
+        self.serial_dataparamprog = data_prog_blue
  
     def update_bufferdata(self):
         # Time struct 12 octets
@@ -127,11 +128,14 @@ class DFH_CentralData:
         # mode auto 20 octets
         # si la couleur n'est pas définie (non accès internet), on evoie une couleur rouge
         if data_homepage.tempo == Tempo_Bleu:
-            self.serial_dataparamauto=data_automode_blue
+            self.serial_dataparamauto = data_automode_blue
+            self.serial_dataparamprog = data_prog_blue
         elif data_homepage.tempo == Tempo_Blanc:
-            self.serial_dataparamauto=data_automode_white
+            self.serial_dataparamauto = data_automode_white
+            self.serial_dataparamprog = data_prog_white
         else :
             self.serial_dataparamauto=data_automode_red
+            self.serial_dataparamprog = data_prog_red
                 
         self.TempMinExt = float(self.serial_dataparamauto.temp_min_ext)       # float 4 octets
         self.PowExcessStart = float(self.serial_dataparamauto.pow_excess_start)  # float 4 octets
@@ -141,7 +145,7 @@ class DFH_CentralData:
         self.TempMinHP = self.serial_dataparamauto.temp_min_HP               #short int 2 octets
         
         # mode program 24 bytes
-        self.TempPerHour = data_homepage.TempPerHour
+        self.TempPerHour = self.serial_dataparamprog.TempPerHour
 
         # hollidays 16 octets
         self.Temp_ArrRedWhiteBlue = data_homepage.Temp_ArrRedWhiteBlue # 4 octets température arrivée/rouge/blanc/bleu = 18°C pour tous
@@ -152,12 +156,12 @@ class DFH_CentralData:
         self.ArrivalDateMonth = data_homepage.ArrivalDateMonth              # short int 2octets
         self.ArrivalDateYear = data_homepage.ArrivalDateYear         # short int 2octets  
        
-        #power and options 16 octets2
+        #power and options 16 octets
         self.PowExcess = -data_homepage.pow_tot      # float 4 octets signe - pour singifier que
                                                         # si PowExcess > 0 c'est bon ! 
         self.PowL1_Home = data_homepage.pow_l1home                # float 4 octets
         self.PowInverter = data_homepage.pow_inv              # float 4 octets    
-        self.Option[0] = data_homepage.mode_opt_repeat_set            # int 4 octets (CouleurTemp|NightCut|EVChargePrio|RepeatSameSet|       
+        self.Option[0] = data_homepage.mode_opt_repeat_set            # Tab 4 octets 
         self.Option[1] = data_homepage.mode_opt_prioVE  
         self.Option[2] = data_homepage.mode_opt_coupure_nuit
         self.Option[3] = data_homepage.tempo
@@ -168,9 +172,10 @@ class DFH_CentralData:
         # Time struct 12 octets
         trame = st.pack("<HHH",self.Sec,self.Min,self.Hour)
         trame = trame+st.pack("<HHH",self.Day,self.Month,self.Year)
+      
         # HMI mode 4 octets
-        
         trame = trame+st.pack("<i",self.mode)
+        
         # mode auto 20 octets
         trame = trame+st.pack("<f",self.TempMinExt)
         trame = trame+st.pack("<f",self.PowExcessStart)
@@ -182,16 +187,32 @@ class DFH_CentralData:
         trame = trame+st.pack("<H",self.TempMinHC)
         trame = trame+st.pack("<H",self.TempMinHP)        
 
+        # mode program 24 bytes
+        for i in range(0,24):
+            trame=trame+st.pack("B",self.TempPerHour[i])
+       
+        # hollidays 16 octets
+        trame = trame+st.pack("<i",self.Temp_ArrRedWhiteBlue)  
+        trame = trame+st.pack("<HHH",self.ArrivalDateSec,self.ArrivalDateMin,self.ArrivalDateHour) 
+        trame = trame+st.pack("<HHH",self.ArrivalDateDay,self.ArrivalDateMonth,self.ArrivalDateYear) 
+       
+        #power and options 16 octets
+        trame = trame+st.pack("<f",self.PowExcess)
+        trame = trame+st.pack("<f",self.PowL1_Home)
+        trame = trame+st.pack("<f",self.PowInverter)
+        trame = trame+st.pack("B",self.Option[0]) 
+        trame = trame+st.pack("B",self.Option[1]) 
+        trame = trame+st.pack("B",self.Option[2]) 
+        trame = trame+st.pack("B",self.Option[3]) 
+
         
         
-            
+        # encapsulaiton longueur    
         l=len(trame)+1 # on inclut le checksum
         trame_l=st.pack("<B",l)
         trame=trame_l+trame # Trame =|L|...data...|
                     #        |0  ....  L-1|
-                    
-                    
-                    
+                     
         #calcul checksum
         checksum=0
         for i in range(0,l): # de 0 à L exclu
