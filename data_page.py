@@ -1,4 +1,5 @@
 from IHM_Global import *
+from datetime import date,timedelta
 
 # === classe qui permettra d'instancier les 4 clim de la maison ===
 class Climatisation:
@@ -60,8 +61,10 @@ class DataHomePage:
         self.ArrivalDateHour = 0               # short int 2octets
         self.ArrivalDateDay = 1                # short int 2octets
         self.ArrivalDateMonth = 1              # short int 2octets
-        self.ArrivalDateYear = 2024            # short int 2octets    
-           
+        self.ArrivalDateYear = 2024            # short int 2octets 
+        
+        self.arrivaldate = date.today()  
+        self.arrivalhour = 0   
     
         # **Définition des 4 climatisations **
         self.ClimSalon=Climatisation("Salon")
@@ -102,7 +105,7 @@ class DataParamProg:
             self.TempPerHour[i]=temp_per_hour[i]
             
         
-        
+
 
 
 # Création des datas associées à la fenêtre

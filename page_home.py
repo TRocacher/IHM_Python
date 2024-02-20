@@ -1,4 +1,4 @@
-from widgets_page_param import FrameModeAuto, FrameModeProg
+from widgets_page_param import FrameModeAuto, FrameModeProg, FrameModeHollydaysDate
 from page_diag import *
 from IHM_Global import *
 
@@ -7,6 +7,8 @@ import tkinter as tk  # tk est l'alias du module tkinder
 
 from Serial_Interface import serial_data
 
+
+# ===================== fenêtre principale =============================
 class PageHome(tk.Tk):
     #frame puissance 
     LARG_FRAME_POW_PIX = 260
@@ -48,9 +50,9 @@ class PageHome(tk.Tk):
             # item Param...
         self.menu_param=tk.Menu(self.menubar, tearoff=0) # création du menu paramètre, fils de menubar  
         self.menubar.add_cascade(label="Paramètres", menu=self.menu_param) # placement du menu fils dans la barre de menu
-        self.menu_param.add_command(label="Mode Automatique",command=self.create_win_param_auto)  # ajout des sous menus
-        self.menu_param.add_command(label="Mode Programmation",command=self.create_win_param_prog)
-        self.menu_param.add_command(label="Mode Vacances")
+        self.menu_param.add_command(label="Mode Automatique",command = self.create_win_param_auto)  # ajout des sous menus
+        self.menu_param.add_command(label="Mode Programmation",command = self.create_win_param_prog)
+        self.menu_param.add_command(label="Mode Vacances", command = self.create_win_param_hollidays)
             # item Diagnostic...
         self.menubar.add_command(label="Diagnostic",command=self.butdiag_callback) #ajout d'un autre menu simple dans la barre de menu
             # item forcer mise à jour Gateway
@@ -116,7 +118,8 @@ class PageHome(tk.Tk):
         # self.radiobut_mode4=tk.Radiobutton(self.frame_mode,text=" Hollidays", variable=self.mode, \
                         # value=HMI_Mode_Hollidays, bg=COLOUR_FRAME,highlightthickness=0, command=self.update_datapage_mode).place(x=0, y=65) 
         
-    # ======================== Méthode de mise à jour des champs de la fenêtre ... ========================
+
+# ======================== Méthode de mise à jour des champs de la fenêtre ... ========================
     def update_time(self):
         self.label_date.config(text=data_homepage.time_date)   # .config permet de modifier les options d'un widget en cours
         self.label_hour.config(text=data_homepage.time_hour)
@@ -135,8 +138,8 @@ class PageHome(tk.Tk):
         self.label_couleurtempo.config(bg=data_homepage.tempobg[data_homepage.tempo])
   
   
-    # ======================== Méthode de mise à jour de data_homepage ... ========================
-    
+# ======================== Méthode de mise à jour de data_homepage ... ========================
+   
     
     def updatemode_off(self):
         data_homepage.mode=HMI_Mode_Off #self.mode.get()
@@ -164,11 +167,10 @@ class PageHome(tk.Tk):
 
 
 
-    # =============Les callbacks des widgets, méthodes==================
+# =============Les callbacks des widgets, méthodes==================
     
-    # **** fenêtre toplevel win_paramauto **** 
+# **** fenêtre toplevel win_paramauto **** 
     def create_win_param_auto(self):
-        #PageParamAuto(self)
         win_paramauto=tk.Toplevel(self)
         win_paramauto.geometry("800x480+0+0")   # taille en pixels
         win_paramauto.resizable(width=0, height=0)
@@ -212,7 +214,7 @@ class PageHome(tk.Tk):
                                           
         
         
-    # **** fenêtre toplevel win_paramauto **** 
+# **** fenêtre toplevel win_paramauto **** 
     def create_win_param_prog(self):
         win_paramprog=tk.Toplevel(self)
         win_paramprog.geometry("800x480+0+0")   # taille en pixels
@@ -231,9 +233,6 @@ class PageHome(tk.Tk):
         self.frame_prog_blue=FrameModeProg(win_paramprog,16,50, "Heures bleue", COLOUR_BLUE,data_prog_blue)
         self.frame_prog_white=FrameModeProg(win_paramprog,245+16*2,50, "Heures blanc", COLOUR_WHITE,data_prog_white)
         self.frame_prog_red=FrameModeProg(win_paramprog,490+16*3,50, "Heures rouge",  COLOUR_RED,data_prog_red) 
-        
-        
-        
            
     
     def win_paramprog_confirm(self):
@@ -241,6 +240,33 @@ class PageHome(tk.Tk):
         data_prog_white.update(self.frame_prog_white.get_tab_temp())
         data_prog_red.update(self.frame_prog_red.get_tab_temp())
 
+
+
+# **** fenêtre toplevel win_hollidays **** 
+    def create_win_param_hollidays(self):
+        win_paramhollidays=tk.Toplevel(self)
+        win_paramhollidays.geometry("800x480+0+0")   # taille en pixels
+        win_paramhollidays.resizable(width=0, height=0)
+        win_paramhollidays.title("Paramètres mode vacances... ")
+
+        win_paramhollidays.grab_set()    # permet à la fenêtre param de recevoir les évènements.
+                                
+        # === Elaboration des Widgets de la fenêtre win_paramhollidays ===
+        #--top boutons--
+        button_back = tk.Button(win_paramhollidays, text="Retour", width=13, height=1 , command=win_paramhollidays.destroy)
+        button_back.place(x=5, y=0)
+        button_confirm = tk.Button(win_paramhollidays, text="Confirmer", width=13, height=1 , command=self.win_paramhollidays_confirm)
+        button_confirm.place(x=140, y=0)
+        # frames principale de saisies 
+        self.framehollydate = FrameModeHollydaysDate(win_paramhollidays,16,50,data_homepage.arrivaldate,data_homepage.arrivalhour)
+        
+
+    def win_paramhollidays_confirm(self):
+        data_homepage.arrivaldate = self.framehollydate.get_arrivaldate()
+        data_homepage.arrivalhour= self.framehollydate.get_arrivalhour()
+
+
+# **** autres callback **** 
     def maj_gateway_callback(self):
         serial_data.sendto_smartgateway()
 

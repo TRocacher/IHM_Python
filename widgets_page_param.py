@@ -1,6 +1,7 @@
 import tkinter as tk 
 from data_page import data_automode_blue, data_prog_blue 
 from IHM_Global import *
+from datetime import date,timedelta
 
 
 class FrameModeAuto():
@@ -34,7 +35,7 @@ class FrameModeAuto():
         self.powexcess_stop.set(self.automodedata.pow_excess_stop)
 
         
-     
+        #============= La frame mode automatique ========= 
         
         # FRAME MODE AUTOMATIQUE                            
         frame_Auto = tk.Frame(window, width=self.LARG_FRAME,height=self.HAUT_FRAME,relief='sunken',bg=COLOUR_FRAME,bd=2)
@@ -126,14 +127,9 @@ class FrameModeProg():
     def __init__(self,window,posx=5,posy=20, texte = "couleur tempo", colour='#C0C0C0',progdata=data_prog_blue): 
         
         self.progdata=progdata
+   
         #============= variables directement associées au Widget =========  
-        
-        # self.tempminHP = tk.IntVar(window)
-        # self.tempminHP.set(self.automodedata.temp_min_HP) 
-        # spinbox_HP=tk.Spinbox(frame_Auto,from_ = 17, to =22, width =2, textvariable=self.tempminHP)
-        
-        
-        
+ 
         self.temp_6_1 = tk.IntVar(window)        
         self.temp_6_2 = tk.IntVar(window)
         self.temp_6_3 = tk.IntVar(window)
@@ -161,9 +157,15 @@ class FrameModeProg():
         
         self.tab_temp = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         
+        #============= La frame mode programmation  ========= 
+        
         # FRAME MODE PROG                   
         frame_prog = tk.Frame(window, width=self.LARG_FRAME,height=self.HAUT_FRAME,relief='sunken',bg=COLOUR_FRAME,bd=2)
         frame_prog.place(x=posx,y=posy+30)
+        
+        print("frame prog")
+        print(frame_prog)
+        
         label_prog= tk.Label(window, text=texte,bg=colour); 
         label_prog.place(x=posx, y=posy)
         # texte tourné à 90°
@@ -209,32 +211,7 @@ class FrameModeProg():
         spinbox_t224=tk.Spinbox(frame_prog,values=templist, textvariable=self.temp_22_4, width=2).place(x=self.XFIELDSENTRY+120 , y=205+self.OFFSET) 
         
         #============= chargement des variables associées au Widget ========= 
-
-        # self.temp_6_1.set(self.progdata.TempPerHour["6h"]["salon"])
-        # self.temp_6_2.set(self.progdata.TempPerHour["6h"]["sam"])
-        # self.temp_6_3.set(self.progdata.TempPerHour["6h"]["entree"])
-        # self.temp_6_4.set(self.progdata.TempPerHour["6h"]["couloir"])
-        # self.temp_8_1.set(self.progdata.TempPerHour["8h"]["salon"])
-        # self.temp_8_2.set(self.progdata.TempPerHour["8h"]["sam"])
-        # self.temp_8_3.set(self.progdata.TempPerHour["8h"]["entree"])
-        # self.temp_8_4.set(self.progdata.TempPerHour["8h"]["couloir"])
-        # self.temp_10_1.set(self.progdata.TempPerHour["10h"]["salon"])
-        # self.temp_10_2.set(self.progdata.TempPerHour["10h"]["sam"])
-        # self.temp_10_3.set(self.progdata.TempPerHour["10h"]["entree"])
-        # self.temp_10_4.set(self.progdata.TempPerHour["10h"]["couloir"])
-        # self.temp_15_1.set(self.progdata.TempPerHour["15h"]["salon"])
-        # self.temp_15_2.set(self.progdata.TempPerHour["15h"]["sam"])
-        # self.temp_15_3.set(self.progdata.TempPerHour["15h"]["entree"])
-        # self.temp_15_4.set(self.progdata.TempPerHour["15h"]["couloir"])
-        # self.temp_17_1.set(self.progdata.TempPerHour["17h"]["salon"])
-        # self.temp_17_2.set(self.progdata.TempPerHour["17h"]["sam"])
-        # self.temp_17_3.set(self.progdata.TempPerHour["17h"]["entree"])
-        # self.temp_17_4.set(self.progdata.TempPerHour["17h"]["couloir"])
-        # self.temp_22_1.set(self.progdata.TempPerHour["22h"]["salon"])
-        # self.temp_22_2.set(self.progdata.TempPerHour["22h"]["sam"])
-        # self.temp_22_3.set(self.progdata.TempPerHour["22h"]["entree"])
-        # self.temp_22_4.set(self.progdata.TempPerHour["22h"]["couloir"])        
-        
+  
         self.temp_6_1.set(self.progdata.TempPerHour[0])
         self.temp_6_2.set(self.progdata.TempPerHour[1])
         self.temp_6_3.set(self.progdata.TempPerHour[2])
@@ -287,3 +264,87 @@ class FrameModeProg():
         self.tab_temp[23] = self.temp_22_4.get()
         return self.tab_temp
         
+
+class FrameModeHollydaysDate():
+    LARG_FRAME = 260
+    HAUT_FRAME = 80
+    XFIELDSENTRY = 130
+    XSHIFT_FRAMETEMP = 0
+    YSHIFT_FRAMETEMP = 150
+    XFIELDSENTRYTEMP = 250
+    def __init__(self,window,posx=5,posy=20,arrivaldate = 0,arrivalhour =0 ): 
+        
+        # =========  FRAME  ============== 
+        label_frame= tk.Label(window, text="saisir le jour de rentrée de vacances : ").place(x=posx, y=posy)                  
+        frame = tk.Frame(window, width=self.LARG_FRAME,height=self.HAUT_FRAME,relief='sunken',bg=COLOUR_FRAME,bd=2)
+        frame.place(x=posx,y=posy+30)
+        
+        # ============ variables directement associées au Widget ==== 
+        
+        self.deltaday = tk.IntVar(window)
+        self.holly_hour = tk.IntVar(window)
+  
+        self.holly_mode = tk.StringVar(window) 
+        self.holly_tempminblue = tk.IntVar(window) 
+        self.holly_tempminwhite = tk.IntVar(window)
+        self.holly_tempminred = tk.IntVar(window)
+        
+        #gestion du temps
+        self.today = date.today()
+        self.arrival = date.today()
+        self.date_arrivee_str=str(self.arrival)
+        
+        #============= La frame vacance date arrivée ========= 
+        tk.Label(frame, text="jour d'arrivée :", bg=COLOUR_FRAME).place(x=5, y=10)
+        spinbox_arrival=tk.Spinbox(frame,values=(-1,+1), textvariable=self.deltaday , width=2,\
+                    bg=COLOUR_FRAME, command = self.update_arrival)
+        spinbox_arrival.place(x=self.XFIELDSENTRY+83 , y=10)
+        self.label_arrivaldate = tk.Label(frame, text="   cliquer sur ...", width=11,bg="white")
+        self.label_arrivaldate.place(x=self.XFIELDSENTRY, y=11)
+        tk.Label(frame, text="Heure d'arrivée :", bg=COLOUR_FRAME).place(x=5, y=35)
+        spinbox_arrival=tk.Spinbox(frame,from_ =0, to_ = 23, textvariable=self.holly_hour , width=2)
+        spinbox_arrival.place(x=self.XFIELDSENTRY , y=35)
+        tk.Label(frame, text="h", bg=COLOUR_FRAME).place(x=self.XFIELDSENTRY+40, y=37)
+        
+        #============= chargement des variables associées au Widget ========= 
+        if arrivaldate <= date.today() : # rien n'a été modifié ou la date d'arrivée anciennement écrite n'est plus valide
+            self.label_arrivaldate.config(text=   "cliquer sur ...")
+        else :
+            self.arrival=arrivaldate           
+            self.label_arrivaldate.config(text=str(self.arrival))
+            self.holly_hour.set(arrivalhour)
+    
+    
+        #============= La frame vacance températures d'arrivée ========= 
+        templist=(0,10,11,12,13,14,15,16,17)
+        # =========  FRAME  ============== 
+        tk.Label(window, text="saisir les températures d'arrivées : ").place(x=posx+self.XSHIFT_FRAMETEMP, y=posy+self.YSHIFT_FRAMETEMP)                  
+        frame_temp = tk.Frame(window, width=self.LARG_FRAME*2,height=self.HAUT_FRAME*2,relief='sunken',bg=COLOUR_FRAME,bd=2)
+        frame_temp.place(x=posx+self.XSHIFT_FRAMETEMP,y=posy+self.YSHIFT_FRAMETEMP+30)
+        tk.Label(frame_temp, text="Mode journée veille d'arrivée :", bg=COLOUR_FRAME).place(x=5, y=10)
+        tk.Spinbox(frame_temp,values=("Automatique","Programmation"), textvariable=self.holly_mode ,width=10).place(x=self.XFIELDSENTRYTEMP,y=10)      
+        tk.Label(frame_temp, text="Température hors gel bleu :", bg=COLOUR_FRAME).place(x=5, y=35)
+        tk.Spinbox(frame_temp,values=templist, textvariable=self.holly_tempminblue , width=2).place(x=self.XFIELDSENTRYTEMP,y=35)
+        tk.Label(frame_temp, text="Température hors gel blanc :", bg=COLOUR_FRAME).place(x=5, y=60)
+        tk.Spinbox(frame_temp,values=templist, textvariable=self.holly_tempminwhite , width=2).place(x=self.XFIELDSENTRYTEMP,y=60)
+        tk.Label(frame_temp, text="Température hors gel rouge :", bg=COLOUR_FRAME).place(x=5, y=85)  
+        tk.Spinbox(frame_temp,values=templist, textvariable=self.holly_tempminred , width=2).place(x=self.XFIELDSENTRYTEMP,y=85)      
+    
+    
+    def update_arrival(self):
+        td= timedelta(self.deltaday.get())
+        self.today = date.today() #réactualisation pour éviter les 12 coups de minuits...
+        
+        self.arrival = self.arrival + td
+        if self.arrival<self.today :
+            self.arrival=self.today
+            
+        
+        self.label_arrivaldate.config(text=str(self.arrival))
+   
+        
+    def get_arrivaldate(self):
+        return(self.arrival) 
+        
+    def get_arrivalhour(self):
+        return(self.holly_hour.get()) 
