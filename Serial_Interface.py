@@ -2,8 +2,13 @@
 
 from IHM_Global import *
 from time import strftime
+from datetime import date,timedelta
 import serial
-from data_page import data_homepage,data_automode_blue,data_automode_white,data_automode_red,data_prog_blue,data_prog_white,data_prog_red
+from data_page import data_homepage, data_automode_blue,\
+                        data_automode_white, data_automode_red,\
+                        data_prog_blue, data_prog_white,\
+                        data_prog_red, data_Hollidays
+                        
 import struct as st # pour envoyer float, cad d'abord passer en byte
 
 class TimeStampTypedef:
@@ -62,16 +67,6 @@ class DFH_ProgramModeDataTypedef:
         self.TempPerHour=tmpperhour
 
         
-# class DFH_HollidaysModeDataTypedef:
-
-    # def __init__(self):
-        # self.Temp_ArrRedWhiteBlue = 0x12121212 # température arrivée/rouge/blanc/bleu = 18°C pour tous
-        # self.ArrivalDate # objet de type TimeStampTypedef
-        
-    # def update(self,temp_arrredwhiteblue,arrivaldate):
-        # self.Temp_ArrRedWhiteBlue=temp_arrredwhiteblue
-        # self.ArrivalDate =arrivaldate
-        
            
                 
 class DFH_CentralData:
@@ -95,7 +90,10 @@ class DFH_CentralData:
         # mode program 24 bytes
         self.TempPerHour=[18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18]
         # hollidays 16 octets
-        self.Temp_ArrRedWhiteBlue = 0x12121212  # 4 octets température arrivée/rouge/blanc/bleu = 18°C pour tous
+        self.hollymode = HMI_Mode_Auto
+        self.TempHG_bleu = 10
+        self.TempHG_blanc = 10
+        self.TempHG_rouge = 10
         self.ArrivalDateSec = 0                # short int 2octets
         self.ArrivalDateMin = 0                # short int 2octets
         self.ArrivalDateHour = 0               # short int 2octets
@@ -148,14 +146,20 @@ class DFH_CentralData:
         self.TempPerHour = self.serial_dataparamprog.TempPerHour
 
         # hollidays 16 octets
-        self.Temp_ArrRedWhiteBlue = data_homepage.Temp_ArrRedWhiteBlue # 4 octets température arrivée/rouge/blanc/bleu = 18°C pour tous
-        self.ArrivalDateSec = data_homepage.ArrivalDateSec                # short int 2octets
-        self.ArrivalDateMin = data_homepage.ArrivalDateMin               # short int 2octets
-        self.ArrivalDateHour = data_homepage.ArrivalDateHour              # short int 2octets
-        self.ArrivalDateDay = data_homepage.ArrivalDateDay                # short int 2octets
-        self.ArrivalDateMonth = data_homepage.ArrivalDateMonth              # short int 2octets
-        self.ArrivalDateYear = data_homepage.ArrivalDateYear         # short int 2octets  
-       
+        self.hollymode = data_Hollidays.hollyarrival_mode
+        self.TempHG_bleu = data_Hollidays.hollytempmin_blue 
+        self.TempHG_blanc = data_Hollidays.hollytempmin_white 
+        self.TempHG_rouge = data_Hollidays.hollytempmin_red 
+        self.ArrivalDateSec = 0             # short int 2octets
+        self.ArrivalDateMin = 0               # short int 2octets
+        self.ArrivalDateHour = data_Hollidays.arrivalhour               # short int 2octets
+        self.ArrivalDateDay = data_Hollidays.arrivaldate.day                # short int 2octets
+        self.ArrivalDateMonth = data_Hollidays.arrivaldate.month              # short int 2octets
+        self.ArrivalDateYear = data_Hollidays.arrivaldate.year           # short int 2octets  
+        
+    
+  
+  
         #power and options 16 octets
         self.PowExcess = -data_homepage.pow_tot      # float 4 octets signe - pour singifier que
                                                         # si PowExcess > 0 c'est bon ! 
@@ -192,7 +196,10 @@ class DFH_CentralData:
             trame=trame+st.pack("B",self.TempPerHour[i])
        
         # hollidays 16 octets
-        trame = trame+st.pack("<i",self.Temp_ArrRedWhiteBlue)  
+        trame = trame+st.pack("B",self.hollymode)
+        trame = trame+st.pack("B",self.TempHG_bleu)
+        trame = trame+st.pack("B",self.TempHG_blanc)
+        trame = trame+st.pack("B",self.TempHG_rouge)
         trame = trame+st.pack("<HHH",self.ArrivalDateSec,self.ArrivalDateMin,self.ArrivalDateHour) 
         trame = trame+st.pack("<HHH",self.ArrivalDateDay,self.ArrivalDateMonth,self.ArrivalDateYear) 
        

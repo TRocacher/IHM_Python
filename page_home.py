@@ -2,7 +2,10 @@ from widgets_page_param import FrameModeAuto, FrameModeProg, FrameModeHollydaysD
 from page_diag import *
 from IHM_Global import *
 
-from data_page import data_homepage,data_automode_blue,data_automode_white,data_automode_red,data_prog_blue,data_prog_white,data_prog_red
+from data_page import data_homepage, data_automode_blue,\
+                        data_automode_white, data_automode_red,\
+                        data_prog_blue, data_prog_white,\
+                        data_prog_red, data_Hollidays
 import tkinter as tk  # tk est l'alias du module tkinder 
 
 from Serial_Interface import serial_data
@@ -20,6 +23,18 @@ class PageHome(tk.Tk):
     HAUT_FRAME_MODE_PIX = 37
     POSX_FRAME_MODE_PIX = 500
     POSY_FRAME_MODE_PIX = 100
+    #frame option
+    LARG_FRAME_OPT = 190
+    HAUT_FRAME_OPT = 80
+    POSX_FRAME_OPT = 500
+    POSY_FRAME_OPT = 250
+    
+    #frame output
+    LARG_FRAME_OUTPUT = 760
+    HAUT_FRAME_OUTPUT = 35
+    POSX_FRAME_OUTPUT = 20
+    POSY_FRAME_OUTPUT = 420   
+    
     #temop couleur
     POSX_TEMPO = 300
     POSY_TEMPO = 20
@@ -29,18 +44,22 @@ class PageHome(tk.Tk):
     # =====================constructeur=================================
     def __init__(self):
         tk.Tk.__init__(self)
-        # === Fenêtre principale ===
+# === Fenêtre principale ===
         self.geometry("800x480+0+0")  # taille en pixels
         self.resizable(width=0, height=0)
         self.title("Home") 
         
-        # === Elaboration des Wdgets de la fenêtre Home ===
-        #  --- la barre de menu et les menus ... --
+# === Variable associées au checkbutton ===
+        self.reapeatset = tk.IntVar(self)        
+        self.prio_ve = tk.IntVar(self)
+        self.cut_night = tk.IntVar(self)
+
+# === Elaboration des Wdgets de la fenêtre Home ===
+        # ==========      Barre de menus       ============
         self.menubar=tk.Menu(self,tearoff=0) # création de contenant menubar
         
-            # item Mode...
-        self.mode_dictio={HMI_Mode_Off:"Arrêt",HMI_Mode_Auto:"Automatique",HMI_Mode_Program :"Programmation",HMI_Mode_Hollidays:"Vacances"}  
-       
+        # item Mode...
+     
         self.menu_mode=tk.Menu(self.menubar, tearoff=0) # création du menu paramètre, fils de menubar    
         self.menubar.add_cascade(label="Mode", menu=self.menu_mode) # placement du menu fils dans la barre de menu
         self.menu_mode.add_command(label="Arrêt",command=self.updatemode_off)  # ajout des sous menus
@@ -61,23 +80,20 @@ class PageHome(tk.Tk):
         self.config(menu=self.menubar) #affichage du menu
         
         
+        # ==========     couleur & date / heure       ============
         # label couleur tempo :
         self.label_couleurtempo=tk.Label(self,text="Couleur du jour : "+ \
                               data_homepage.tempostring[data_homepage.tempo])
         self.label_couleurtempo.place(x=self.POSX_TEMPO, y=self.POSY_TEMPO)
                
-        # # --Les boutons de navigation--
-        # self.button_param = tk.Button(self, text="Param.", width=13, height=1,command=self.create_win_param_auto)
-        # self.button_param.place(x=5, y=300)
-        # self.button_diag = tk.Button(self, text="Diagnostic", width=13, height=1,command=self.butdiag_callback)
-        # self.button_diag.place(x=140, y=300)
      
         # --Labels Date and Hour--
         self.label_date = tk.Label(self, text=data_homepage.time_date,width=30, height=1)
         self.label_date.place(x=400, y=50) 
         self.label_hour = tk.Label(self, text=data_homepage.time_hour, width=30, height=1)
         self.label_hour.place(x=400, y=75) 
-        
+
+        # ==========    FRAME PUISSANCE     ============        
         # --Affichage infos puissance --
         self.frame_pow = tk.Frame(self, width=self.LARG_FRAME_POW_PIX, height=self.HAUT_FRAME_POW_PIX, borderwidth=3,relief='groove',bg=COLOUR_FRAME)
         self.frame_pow.place(x=self.POSX_FRAME_POW_PIX, y=self.POSY_FRAME_POW_PIX)
@@ -103,20 +119,29 @@ class PageHome(tk.Tk):
         self.temoin_pow.place(x=220,y=5)
         self.temoin=self.temoin_pow.create_oval(2,2,22,22,fill="red")
         
-        #affichage du mode
+        # ==========    FRAME MODE     ============ 
         self.frame_mode = tk.Frame(self, width=self.LARG_FRAME_MODE_PIX, height=self.HAUT_FRAME_MODE_PIX, borderwidth=3,relief='groove',bg=COLOUR_FRAME)
         self.frame_mode.place(x=self.POSX_FRAME_MODE_PIX, y=self.POSY_FRAME_MODE_PIX)
-        self.label_mode=tk.Label(self.frame_mode, text=" Mode  : "+ self.mode_dictio[data_homepage.mode], bg=COLOUR_FRAME)
+        self.label_mode=tk.Label(self.frame_mode, text=" Mode  : "+ MODE_DICTIO[data_homepage.mode], bg=COLOUR_FRAME)
         self.label_mode.place(x=5, y=5) 
-        # self.mode.set(data_homepage.mode)
-        # self.radiobut_mode1=tk.Radiobutton(self.frame_mode,text=" Off", variable=self.mode, \
-                        # value=HMI_Mode_Off, bg=COLOUR_FRAME,highlightthickness=0, command=self.update_datapage_mode).place(x=0, y=5) 
-        # self.radiobut_mode2=tk.Radiobutton(self.frame_mode,text=" Auto", variable=self.mode, \
-                        # value=HMI_Mode_Auto, bg=COLOUR_FRAME,highlightthickness=0, command=self.update_datapage_mode).place(x=0, y=25) 
-        # self.radiobut_mode3=tk.Radiobutton(self.frame_mode,text=" Program", variable=self.mode, \
-                        # value=HMI_Mode_Program, bg=COLOUR_FRAME,highlightthickness=0, command=self.update_datapage_mode).place(x=0, y=45) 
-        # self.radiobut_mode4=tk.Radiobutton(self.frame_mode,text=" Hollidays", variable=self.mode, \
-                        # value=HMI_Mode_Hollidays, bg=COLOUR_FRAME,highlightthickness=0, command=self.update_datapage_mode).place(x=0, y=65) 
+        
+        # ==========    FRAME OPTIONS  ============ 
+        self.frame_opt = tk.Frame(self, width=self.LARG_FRAME_OPT, height=self.HAUT_FRAME_OPT, borderwidth=3,relief='groove',bg=COLOUR_FRAME)
+        self.frame_opt.place(x=self.POSX_FRAME_OPT, y=self.POSY_FRAME_OPT)
+        
+        tk.Checkbutton(self.frame_opt, text = "Beep clim  ", variable =  self.reapeatset, \
+                                        bg=COLOUR_FRAME, highlightthickness=0, command = self.update_option).place(x = 5,y = 5)
+        tk.Checkbutton(self.frame_opt, text = "Priorité VE  ", variable =  self.prio_ve, \
+                                        bg=COLOUR_FRAME, highlightthickness=0, command = self.update_option).place(x = 5,y = 25)  
+        tk.Checkbutton(self.frame_opt, text = "Coupure clim nuit ", variable =  self.cut_night, \
+                                        bg=COLOUR_FRAME, highlightthickness=0, command = self.update_option).place(x = 5,y = 45)  
+        
+        # ==========    FRAME Output  ============ 
+        self.frame_output = tk.Frame(self, width=self.LARG_FRAME_OUTPUT, height=self.HAUT_FRAME_OUTPUT, \
+                                    bg = "white", borderwidth=3,relief='groove')
+        self.frame_output.place(x=self.POSX_FRAME_OUTPUT, y=self.POSY_FRAME_OUTPUT)
+        self.label_output=tk.Label(self.frame_output , text="Hello", width = 80, bg = "white", anchor ="w")
+        self.label_output.place(x=5, y=5)
         
 
 # ======================== Méthode de mise à jour des champs de la fenêtre ... ========================
@@ -137,25 +162,36 @@ class PageHome(tk.Tk):
         self.label_couleurtempo.config(text="Couleur du jour : "+ data_homepage.tempostring[data_homepage.tempo])
         self.label_couleurtempo.config(bg=data_homepage.tempobg[data_homepage.tempo])
   
-  
+    def update_option(self):
+        # mise à jour ds data_home
+        data_homepage.mode_opt_repeat_set = self.reapeatset.get()
+        data_homepage.mode_opt_prioVE = self.prio_ve.get()
+        data_homepage.mode_opt_coupure_nuit = self.cut_night.get() 
+    
+    def update_outputmessage(self):
+        # mise à jour du message
+        print(data_homepage.message+"update")
+        self.label_output.config(text=data_homepage.message)
+    
+    
 # ======================== Méthode de mise à jour de data_homepage ... ========================
    
     
     def updatemode_off(self):
         data_homepage.mode=HMI_Mode_Off #self.mode.get()
-        self.label_mode.config(text=" Mode  : "+ self.mode_dictio[data_homepage.mode])
+        self.label_mode.config(text=" Mode  : "+ MODE_DICTIO[data_homepage.mode])
         print(data_homepage.mode)
     def updatemode_auto(self):
         data_homepage.mode=HMI_Mode_Auto
-        self.label_mode.config(text=" Mode  : "+ self.mode_dictio[data_homepage.mode])
+        self.label_mode.config(text=" Mode  : "+ MODE_DICTIO[data_homepage.mode])
         print(data_homepage.mode)
     def updatemode_prog(self):
         data_homepage.mode=HMI_Mode_Program
-        self.label_mode.config(text=" Mode  : "+ self.mode_dictio[data_homepage.mode])
+        self.label_mode.config(text=" Mode  : "+ MODE_DICTIO[data_homepage.mode])
         print(data_homepage.mode)
     def updatemode_hollidays(self):
         data_homepage.mode=HMI_Mode_Hollidays
-        self.label_mode.config(text=" Mode  : "+ self.mode_dictio[data_homepage.mode])
+        self.label_mode.config(text=" Mode  : "+ MODE_DICTIO[data_homepage.mode])
         print(data_homepage.mode)
 
 
@@ -258,18 +294,26 @@ class PageHome(tk.Tk):
         button_confirm = tk.Button(win_paramhollidays, text="Confirmer", width=13, height=1 , command=self.win_paramhollidays_confirm)
         button_confirm.place(x=140, y=0)
         # frames principale de saisies 
-        self.framehollydate = FrameModeHollydaysDate(win_paramhollidays,16,50,data_homepage.arrivaldate,data_homepage.arrivalhour)
+        self.framehollydate = FrameModeHollydaysDate(win_paramhollidays,16,50,data_Hollidays)
         
 
     def win_paramhollidays_confirm(self):
-        data_homepage.arrivaldate = self.framehollydate.get_arrivaldate()
-        data_homepage.arrivalhour= self.framehollydate.get_arrivalhour()
-
+        data_Hollidays.update(self.framehollydate.get_arrivaldate(), \
+                              self.framehollydate.get_arrivalhour(), \
+                              self.framehollydate.get_hollymode(), \
+                              self.framehollydate.get_holly_tempminblue(), \
+                              self.framehollydate.get_holly_tempminwhite(), \
+                              self.framehollydate.get_holly_tempminred())
+        
+ 
 
 # **** autres callback **** 
     def maj_gateway_callback(self):
+        data_homepage.message =" connection gateway, envoie paramètres ..."
+        self.update_outputmessage()
         serial_data.sendto_smartgateway()
-
+        data_homepage.message =" fin connection gateway"
+        self.update_outputmessage()
 
     def butdiag_callback(self):
         win_diag_creation(self)

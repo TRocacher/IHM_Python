@@ -1,5 +1,5 @@
 import tkinter as tk 
-from data_page import data_automode_blue, data_prog_blue 
+from data_page import data_automode_blue, data_prog_blue, data_Hollidays 
 from IHM_Global import *
 from datetime import date,timedelta
 
@@ -272,7 +272,7 @@ class FrameModeHollydaysDate():
     XSHIFT_FRAMETEMP = 0
     YSHIFT_FRAMETEMP = 150
     XFIELDSENTRYTEMP = 250
-    def __init__(self,window,posx=5,posy=20,arrivaldate = 0,arrivalhour =0 ): 
+    def __init__(self,window,posx = 5,posy = 20, hollydays_data = data_Hollidays): 
         
         # =========  FRAME  ============== 
         label_frame= tk.Label(window, text="saisir le jour de rentrée de vacances : ").place(x=posx, y=posy)                  
@@ -306,14 +306,7 @@ class FrameModeHollydaysDate():
         spinbox_arrival.place(x=self.XFIELDSENTRY , y=35)
         tk.Label(frame, text="h", bg=COLOUR_FRAME).place(x=self.XFIELDSENTRY+40, y=37)
         
-        #============= chargement des variables associées au Widget ========= 
-        if arrivaldate <= date.today() : # rien n'a été modifié ou la date d'arrivée anciennement écrite n'est plus valide
-            self.label_arrivaldate.config(text=   "cliquer sur ...")
-        else :
-            self.arrival=arrivaldate           
-            self.label_arrivaldate.config(text=str(self.arrival))
-            self.holly_hour.set(arrivalhour)
-    
+
     
         #============= La frame vacance températures d'arrivée ========= 
         templist=(0,10,11,12,13,14,15,16,17)
@@ -322,7 +315,7 @@ class FrameModeHollydaysDate():
         frame_temp = tk.Frame(window, width=self.LARG_FRAME*2,height=self.HAUT_FRAME*2,relief='sunken',bg=COLOUR_FRAME,bd=2)
         frame_temp.place(x=posx+self.XSHIFT_FRAMETEMP,y=posy+self.YSHIFT_FRAMETEMP+30)
         tk.Label(frame_temp, text="Mode journée veille d'arrivée :", bg=COLOUR_FRAME).place(x=5, y=10)
-        tk.Spinbox(frame_temp,values=("Automatique","Programmation"), textvariable=self.holly_mode ,width=10).place(x=self.XFIELDSENTRYTEMP,y=10)      
+        tk.Spinbox(frame_temp,values=(MODE_DICTIO[HMI_Mode_Auto],MODE_DICTIO[HMI_Mode_Program]), textvariable=self.holly_mode ,width=12).place(x=self.XFIELDSENTRYTEMP,y=10)      
         tk.Label(frame_temp, text="Température hors gel bleu :", bg=COLOUR_FRAME).place(x=5, y=35)
         tk.Spinbox(frame_temp,values=templist, textvariable=self.holly_tempminblue , width=2).place(x=self.XFIELDSENTRYTEMP,y=35)
         tk.Label(frame_temp, text="Température hors gel blanc :", bg=COLOUR_FRAME).place(x=5, y=60)
@@ -330,16 +323,29 @@ class FrameModeHollydaysDate():
         tk.Label(frame_temp, text="Température hors gel rouge :", bg=COLOUR_FRAME).place(x=5, y=85)  
         tk.Spinbox(frame_temp,values=templist, textvariable=self.holly_tempminred , width=2).place(x=self.XFIELDSENTRYTEMP,y=85)      
     
+        #============= chargement des variables associées au Widget ========= 
+        if hollydays_data.arrivaldate <= date.today() : # rien n'a été modifié ou la date d'arrivée anciennement écrite n'est plus valide
+            self.label_arrivaldate.config(text=   "cliquer sur ...")
+        else :
+            self.arrival=hollydays_data.arrivaldate           
+            self.label_arrivaldate.config(text=str(self.arrival))
+            self.holly_hour.set(hollydays_data.arrivalhour)
+        
+        self.holly_mode.set(MODE_DICTIO[hollydays_data.hollyarrival_mode])
+        self.holly_tempminblue.set(hollydays_data.hollytempmin_blue)
+        self.holly_tempminwhite.set(hollydays_data.hollytempmin_white)
+        self.holly_tempminred.set(hollydays_data.hollytempmin_red)
     
-    def update_arrival(self):
+    
+    
+    def update_arrival(self):   
         td= timedelta(self.deltaday.get())
         self.today = date.today() #réactualisation pour éviter les 12 coups de minuits...
         
         self.arrival = self.arrival + td
         if self.arrival<self.today :
             self.arrival=self.today
-            
-        
+         
         self.label_arrivaldate.config(text=str(self.arrival))
    
         
@@ -348,3 +354,21 @@ class FrameModeHollydaysDate():
         
     def get_arrivalhour(self):
         return(self.holly_hour.get()) 
+
+    def get_hollymode(self):
+        value = HMI_Mode_Auto
+        if self.holly_mode.get() == MODE_DICTIO[HMI_Mode_Program]:
+            value = HMI_Mode_Program
+        return(value) 
+        
+    def get_holly_tempminblue(self):
+        return(self.holly_tempminblue.get())
+        
+    def get_holly_tempminwhite(self):
+        return(self.holly_tempminwhite.get())
+
+    def get_holly_tempminred(self):
+        return(self.holly_tempminred.get())
+
+        
+        

@@ -1,5 +1,9 @@
-Ajouter une ligne en bas de la home page pour afficher ce qu'il se pass
-genre req HTTP, Echange UART..
+
+
+
+
+
+
 
 Revoir le 50000 en cas de mauvaise requête : il suffit de détecter
 cette valeur dans la méthode update pour affecter une chaîne originale

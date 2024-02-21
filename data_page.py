@@ -49,11 +49,7 @@ class DataHomePage:
         # string ex Monday 1 Oct 2023
         self.time_hour = "00:00:00" 
         # string ex 12:48:51
-
-        # # program, à décliner en une classe spécifique et 3 objets
-        # self.TempPerHour=[18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18]   
         
-
         # hollidays 16 octets
         self.Temp_ArrRedWhiteBlue = 0x12121212  # 4 octets température arrivée/rouge/blanc/bleu = 18°C pour tous
         self.ArrivalDateSec = 0                # short int 2octets
@@ -62,15 +58,17 @@ class DataHomePage:
         self.ArrivalDateDay = 1                # short int 2octets
         self.ArrivalDateMonth = 1              # short int 2octets
         self.ArrivalDateYear = 2024            # short int 2octets 
-        
-        self.arrivaldate = date.today()  
-        self.arrivalhour = 0   
+       
     
         # **Définition des 4 climatisations **
         self.ClimSalon=Climatisation("Salon")
         self.ClimSalon=Climatisation("SalleAManger")
         self.ClimSalon=Climatisation("Entree")
         self.ClimSalon=Climatisation("Couloir")
+        
+        #sortie message
+        self.message = " "
+        
 
 
 class DataParamAuto:
@@ -105,7 +103,25 @@ class DataParamProg:
             self.TempPerHour[i]=temp_per_hour[i]
             
         
-
+class DataParamHollidays:
+    def __init__(self):
+        
+        self.hollyarrival_mode = HMI_Mode_Auto
+        self.hollytempmin_blue = 10
+        self.hollytempmin_white = 10
+        self.hollytempmin_red = 10
+        self.arrivaldate = date.today()  
+        self.arrivalhour = 0   
+        
+    def update(self, arrivaldate, arrivalhour, hollyarrival_mode, \
+                hollytempmin_blue, hollytempmin_white, hollytempmin_red ):
+                    
+        self.arrivaldate = arrivaldate
+        self.arrivalhour= arrivalhour
+        self.hollyarrival_mode = hollyarrival_mode
+        self.hollytempmin_blue = hollytempmin_blue
+        self.hollytempmin_white = hollytempmin_white
+        self.hollytempmin_red = hollytempmin_red    
 
 
 # Création des datas associées à la fenêtre
@@ -116,7 +132,7 @@ data_automode_red=DataParamAuto()
 data_prog_blue = DataParamProg()
 data_prog_white = DataParamProg()
 data_prog_red = DataParamProg()
-
+data_Hollidays = DataParamHollidays()
 
 
 

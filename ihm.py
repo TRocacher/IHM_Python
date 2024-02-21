@@ -5,6 +5,7 @@ from IHM_Global import *
 from page_home import PageHome
 from data_page import data_homepage
 from time import strftime
+
 import tkinter as tk
 import requests
 
@@ -23,14 +24,20 @@ def updatepowdata(): # requête vers inverter avec gestion exeption\
                        # au cas où échec de connection. \
                        # timout configurable
     win_home.after(UPDATE_POW_PER ,updatepowdata)
+    data_homepage.message =" connection onduleur ..."
+    win_home.update_outputmessage()
+  
     try:
         res=requests.get(URL_FRONIUS_METER, timeout=TIME_OUT_SEC)
         res_inv=requests.get(URL_FRONIUS_INVERTER,timeout=TIME_OUT_SEC)
         res_tempo=requests.get(URL_EDFTEMPO,timeout=TIME_OUT_SEC_TEMPO)
     except Exception:
-        data_homepage.pow_tot=50000.0
-        data_homepage.pow_inv=-50000.0
-        data_homepage.pow_l1home=50000.0
+        data_homepage.pow_tot=0.0
+        data_homepage.pow_inv=-1.0
+        data_homepage.pow_l1home=0.0
+        data_homepage.message ="pas d'accès onduleur "
+        win_home.update_outputmessage()
+        
         
     else:
      
@@ -57,6 +64,10 @@ def updatepowdata(): # requête vers inverter avec gestion exeption\
         # arrondi à une décimale dans la soustraction
         data_homepage.pow_l2=data_elec["PowerReal_P_Phase_2"] 
         data_homepage.pow_l3=data_elec["PowerReal_P_Phase_3"] 
+        
+        data_homepage.message ="connection onduleur terminée... " 
+        win_home.update_outputmessage()
+        
 
     finally:
         win_home.update_powdata()
@@ -64,16 +75,25 @@ def updatepowdata(): # requête vers inverter avec gestion exeption\
 
 def updatelabel_tempoEDF():
     win_home.after(UPDATE_POW_PER ,updatelabel_tempoEDF) # modifier la période 
+    data_homepage.message =" connection edf pour la couleur tempo du jour ..."
+    win_home.update_outputmessage()
+   
     try:
         res_tempo=requests.get(URL_EDFTEMPO,timeout=TIME_OUT_SEC_TEMPO)
     except Exception:
         data_homepage.tempo = Tempo_NoConnection 
+        data_homepage.message =" Pas de connexion site EDF "
+        win_home.update_outputmessage()
+        
     else:  
         json_brut=res_tempo.json()
         data_homepage.tempo =json_brut["codeJour"]
         win_home.update_tempo()
         print(data_homepage.tempo) 
         print(data_homepage.tempostring[data_homepage.tempo]  )
+        
+        data_homepage.message =" "
+        win_home.update_outputmessage()
         
 
 def transaction_SGw():
