@@ -5,14 +5,16 @@ from IHM_Global import *
 from page_home import PageHome
 from data_page import data_homepage
 from time import strftime
+from Serial_Interface import serial_data
 
 import tkinter as tk
 import requests
 
-UPDATE_TIME_PER = 1000
-UPDATE_POW_PER = 60000
-URL_FRONIUS_METER = 'http://192.168.0.10/solar_api/v1/GetMeterRealtimeData.cgi?Scope=System'
-URL_FRONIUS_INVERTER= 'http://192.168.0.10/solar_api/v1/GetInverterRealtimeData.cgi?Scope=System&DataCollection=CumulationInverterData'
+UPDATE_TIME_PER = 1000          #1Sec
+UPDATE_POW_PER = 60000          #1min
+Update_Serial_PER = (60000*5)   #5mn
+URL_FRONIUS_METER = 'http://192.168.1.10/solar_api/v1/GetMeterRealtimeData.cgi?Scope=System'
+URL_FRONIUS_INVERTER= 'http://192.168.1.10/solar_api/v1/GetInverterRealtimeData.cgi?Scope=System&DataCollection=CumulationInverterData'
 URL_EDFTEMPO = 'https://www.api-couleur-tempo.fr/api/jourTempo/today'
 TIME_OUT_SEC = 5
 TIME_OUT_SEC_TEMPO = 10
@@ -97,7 +99,8 @@ def updatelabel_tempoEDF():
         
 
 def transaction_SGw():
-    pass
+    win_home.after(Update_Serial_PER ,transaction_SGw)
+    serial_data.sendto_smartgateway()
     
 def UpdateLabel_Clim():
     pass
@@ -123,7 +126,7 @@ updatepowdata()
 updatelabel_tempoEDF()
 # Lancement Horloge
 updatetimedata()
-
+transaction_SGw()
 
 # entrée dans la boucle infinie. Attente des évènements souris
 win_home.mainloop() 

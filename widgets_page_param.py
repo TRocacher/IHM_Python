@@ -178,7 +178,9 @@ class FrameModeProg():
         canvas_salon.create_text(140,100,text = "Couloir",angle = 90, anchor = "sw") 
 
         # Saisie des températures 
-        templist=(0,17,18,19,20,21,22)
+        templist=(0,18,19,20,21,22) #17 10 24 enlevé la valeur 17 de la liste
+                                    #modifé les deux derniers horaires à l'affichage en dur
+                                    # 17 devient 18 et 22 devient 23h.
         label_temp_6_1 = tk.Label(frame_prog, text="Temp. 6h :", bg=COLOUR_FRAME).place(x=3, y=7+self.OFFSET)
         spinbox_t61=tk.Spinbox(frame_prog,values=templist, textvariable=self.temp_6_1, width=2).place(x=self.XFIELDSENTRY , y=5+self.OFFSET)
         spinbox_t62=tk.Spinbox(frame_prog,values=templist, textvariable=self.temp_6_2, width=2).place(x=self.XFIELDSENTRY+40 , y=5+self.OFFSET) 
@@ -199,12 +201,12 @@ class FrameModeProg():
         spinbox_t152=tk.Spinbox(frame_prog,values=templist, textvariable=self.temp_15_2, width=2).place(x=self.XFIELDSENTRY+40 , y=125+self.OFFSET) 
         spinbox_t153=tk.Spinbox(frame_prog,values=templist, textvariable=self.temp_15_3, width=2).place(x=self.XFIELDSENTRY+80 , y=125+self.OFFSET) 
         spinbox_t154=tk.Spinbox(frame_prog,values=templist, textvariable=self.temp_15_4, width=2).place(x=self.XFIELDSENTRY+120 , y=125+self.OFFSET) 
-        label_temp_17_1= tk.Label(frame_prog, text="Temp. 17h :", bg=COLOUR_FRAME).place(x=3, y=167+self.OFFSET)
+        label_temp_17_1= tk.Label(frame_prog, text="Temp. 18h :", bg=COLOUR_FRAME).place(x=3, y=167+self.OFFSET)
         spinbox_t171=tk.Spinbox(frame_prog,values=templist, textvariable=self.temp_17_1, width=2).place(x=self.XFIELDSENTRY+0 , y=165+self.OFFSET) 
         spinbox_t172=tk.Spinbox(frame_prog,values=templist, textvariable=self.temp_17_2, width=2).place(x=self.XFIELDSENTRY+40 , y=165+self.OFFSET)
         spinbox_t173=tk.Spinbox(frame_prog,values=templist, textvariable=self.temp_17_3, width=2).place(x=self.XFIELDSENTRY+80 , y=165+self.OFFSET) 
         spinbox_t174=tk.Spinbox(frame_prog,values=templist, textvariable=self.temp_17_4, width=2).place(x=self.XFIELDSENTRY+120 , y=165+self.OFFSET)
-        label_temp_22_1= tk.Label(frame_prog, text="Temp. 22h :", bg=COLOUR_FRAME).place(x=3, y=207+self.OFFSET)
+        label_temp_22_1= tk.Label(frame_prog, text="Temp. 23h :", bg=COLOUR_FRAME).place(x=3, y=207+self.OFFSET)
         spinbox_t221=tk.Spinbox(frame_prog,values=templist, textvariable=self.temp_22_1, width=2).place(x=self.XFIELDSENTRY+0 , y=205+self.OFFSET) 
         spinbox_t222=tk.Spinbox(frame_prog,values=templist, textvariable=self.temp_22_2, width=2).place(x=self.XFIELDSENTRY+40 , y=205+self.OFFSET)
         spinbox_t223=tk.Spinbox(frame_prog,values=templist, textvariable=self.temp_22_3, width=2).place(x=self.XFIELDSENTRY+80 , y=205+self.OFFSET) 

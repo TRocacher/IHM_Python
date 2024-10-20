@@ -96,8 +96,8 @@ class DataParamProg:
 
         
         #self.TempPerHour = {"6h":temp_6h,"8h":temp_8h,"10h":temp_10h,"15h":temp_10h,"17h":temp_10h,"22h":temp_22h} 
-        self.TempPerHour =[17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17]
-        
+        self.TempPerHour =[19,19,0,0,19,19,0,0,19,19,0,0,19,19,0,0,19,19,0,0,19,19,0,0]
+        # 17 10 24 modifié 17 par 19 en état init
     def update(self,temp_per_hour):
         for i in range(0,24):
             self.TempPerHour[i]=temp_per_hour[i]

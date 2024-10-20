@@ -46,6 +46,10 @@ class PageHome(tk.Tk):
         tk.Tk.__init__(self)
 # === Fenêtre principale ===
         self.geometry("800x480+0+0")  # taille en pixels
+        #  Ligne permattant de passer en fullscrren ...
+        # nb ds l'appli si plantage, brancher un clavier puis touche windows
+        # puis PS et kill. Mieux prévoir un bouton fullscrren/Normal...
+        #self.attributes("-fullscreen",True)
         self.resizable(width=0, height=0)
         self.title("Home") 
         
