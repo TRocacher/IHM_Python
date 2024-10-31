@@ -1,6 +1,9 @@
 # ATTENTION PLANTAGE si erreur d'adressage IP 10 et pas 11 ou l'inverse
 # le try catch doit être amélioré
 
+#Version 2.0
+#Retour info clim OK, voir ToDo pour la suite...
+
 from IHM_Global import *
 from page_home import PageHome
 from data_page import data_homepage

@@ -1,5 +1,6 @@
 from widgets_page_param import FrameModeAuto, FrameModeProg, FrameModeHollydaysDate
 from page_diag import *
+from page_clim import *
 from IHM_Global import *
 
 from data_page import data_homepage, data_automode_blue,\
@@ -27,13 +28,13 @@ class PageHome(tk.Tk):
     LARG_FRAME_OPT = 190
     HAUT_FRAME_OPT = 80
     POSX_FRAME_OPT = 500
-    POSY_FRAME_OPT = 250
+    POSY_FRAME_OPT = 200
     
     #frame output
     LARG_FRAME_OUTPUT = 760
     HAUT_FRAME_OUTPUT = 35
     POSX_FRAME_OUTPUT = 20
-    POSY_FRAME_OUTPUT = 420   
+    POSY_FRAME_OUTPUT = 300   
     
     #temop couleur
     POSX_TEMPO = 300
@@ -76,6 +77,8 @@ class PageHome(tk.Tk):
         self.menu_param.add_command(label="Mode Automatique",command = self.create_win_param_auto)  # ajout des sous menus
         self.menu_param.add_command(label="Mode Programmation",command = self.create_win_param_prog)
         self.menu_param.add_command(label="Mode Vacances", command = self.create_win_param_hollidays)
+            #item climatisation
+        self.menubar.add_command(label="Climatisations",command=self.create_win_Clim) #ajout d'un autre menu simple dans la barre de menu
             # item Diagnostic...
         self.menubar.add_command(label="Diagnostic",command=self.butdiag_callback) #ajout d'un autre menu simple dans la barre de menu
             # item forcer mise à jour Gateway
@@ -309,6 +312,10 @@ class PageHome(tk.Tk):
                               self.framehollydate.get_holly_tempminwhite(), \
                               self.framehollydate.get_holly_tempminred())
         
+ 
+    def create_win_Clim(self):
+        win_clim_creation(self)
+ 
  
 
 # **** autres callback **** 

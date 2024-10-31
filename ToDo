@@ -1,18 +1,15 @@
+Epurer les scripts
+
+* faire un autostart au boot de la raspy
+* ajouter clim externe
+* faire le stop
+* faire holliday
+
+* ajouter fonctionnalité VE, et coupure clim la nuit
+* modifier les bouton confirmer en tuant la fenêtre aussi.
 
 
 
 
 
 
-
-Revoir le 50000 en cas de mauvaise requête : il suffit de détecter
-cette valeur dans la méthode update pour affecter une chaîne originale
-genre : pas d'accès onduleur
-
-Penser le protocole UART en requ/réponse, IHM maître
-Et mettre en place la communication Gateway-IHM qu'on va renommer
-SystManager-IHM
-
-Poursuivre l'interface homePage
-Renommer tous les modules
-Update des données, bien structurer.

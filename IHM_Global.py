@@ -18,5 +18,26 @@ COLOUR_BLUE = '#4065DE'
 COLOUR_WHITE = '#FFFFFF'
 COLOUR_RED = '#FF0000'
 
+#Valeur possible Diagnostic
+Serial_NoError =  0
+Serial_ReceiveCheckSumFail = 1
+Serial_ReceiveLongFail = 2
+Serial_NoMssgFromSGw=3
 
+#liste des cmdes téléco IR
+Chaud_18_VanBas_FanAuto = 193
+Chaud_19_VanBas_FanAuto = 194
+Chaud_20_VanBas_FanAuto = 195
+Chaud_21_VanBas_FanAuto = 196
+Chaud_22_VanBas_FanAuto = 197
+Chaud_23_VanBas_FanAuto = 198
+NoCommandToSend = 199
+Stop = 192
 
+#liste des warning RmDv
+Status_NoWarning =1
+Status_Trial_2 = 2
+Status_Trial_3 = 3
+Status_Error_TempI2C = 20
+Status_Error_NewTempSetNotReceived = 21
+Status_NoStatusReceived = 22

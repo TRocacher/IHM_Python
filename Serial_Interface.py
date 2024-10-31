@@ -2,75 +2,23 @@
 
 from IHM_Global import *
 from time import strftime
+import time as _time
 from datetime import date,timedelta
 import serial
 from data_page import data_homepage, data_automode_blue,\
                         data_automode_white, data_automode_red,\
                         data_prog_blue, data_prog_white,\
-                        data_prog_red, data_Hollidays
+                        data_prog_red, data_Hollidays,\
+                        Clim_Salon,Clim_SaM,Clim_Entree,Clim_Couloir
                         
 import struct as st # pour envoyer float, cad d'abord passer en byte
 
-class TimeStampTypedef:
-    def __init__(self): 
-        self.Sec = 0
-        self.Min = 0
-        self.Hour = 0
-        self.Day = 1
-        self.Month = 1
-        self.Year = 2024
-    
-    def update(self):
-        self.Sec = int(strftime('%S'))
-        self.Min = int(strftime('%M'))
-        self.Hour = int(strftime('%H'))
-        self.Day = int(strftime('%d'))
-        self.Month = int(strftime('%m'))
-        self.Year = int(strftime('%Y'))
-
-class DFH_HMIMode:
-    def __init__(self): 
-        self.Mode = 0 # voir data_page.py pour les valeurs précises, int
-
-    
-    def update(self, mode):
-        self.Mode = mode
-
-
-class DFH_AutoModeDataTypedef:
-    
-    def __init__(self):
-        self.TempMinExt = 7.0
-        self.PowExcessStart = 500.0
-        self.PowExcessStop = 0.0
-        self.ClimPrio = [1,2,3,4]
-        self.TempMinHC = 18 #short int !
-        self.TempMinHP = 18 #short int !
-      
-    def update(self,tempminext,powexcessstart,powexcessstop,climprio,tempminhc,tempminhp):
-        self.TempMinExt = float(tempminext)
-        self.PowExcessStart = float(powexcessstart)
-        self.PowExcessStop = float(powexcessstop)
-        self.ClimPrio = climprio
-        self.TempMinHC = tempminhc #short int !
-        self.TempMinHP = tempminhp #short int !
-        
-      
-
-
-class DFH_ProgramModeDataTypedef:
-
-    def __init__(self):
-        self.TempPerHour=[18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,1818,18,18,18,18,18]
-
-    def update(self,tmpperhour):
-        self.TempPerHour=tmpperhour
-
-        
            
                 
 class DFH_CentralData:
-    def __init__(self):  # 92 octets en tout
+    def __init__(self): 
+        self.SerialStatus = Serial_NoError
+        # 92 octets en tout
         # Time struct 12 octets
         self.Sec = 0                # short int 2octets
         self.Min = 0                # short int 2octets
@@ -172,6 +120,9 @@ class DFH_CentralData:
 
     def sendto_smartgateway(self):
         ser = serial.Serial(port='/dev/serial0',baudrate=9600, timeout=1)
+        ser.flushInput(); #vider le buffer 
+        _time.sleep(0.5); #????
+        
         self.update_bufferdata()
         # Time struct 12 octets
         trame = st.pack("<HHH",self.Sec,self.Min,self.Hour)
@@ -228,16 +179,64 @@ class DFH_CentralData:
         trame_sum=st.pack("<B",checksum)
         trame=trame+trame_sum
         
-        ser.write(trame) 
-            
-                
+        #emission...
+        ser.write(trame)
+        #pause pour laisser le tps SGw de calculer la réponse
+        _time.sleep(0.5);
         
-# Définition des variables pour le transfert série
-serial_timestamp = TimeStampTypedef()
-serial_mode = DFH_HMIMode()
-serial_automodedata = DFH_AutoModeDataTypedef()
-serial_programmodedata = DFH_ProgramModeDataTypedef()
-# serial_hollidaysmodedata = DFH_HollidaysModeDataTypedef()
+        #Lecture du buffer série (liste)
+        TabSerialIn=[]
+        IsRx=0
+        while (ser.inWaiting()>0): #tant qu'il y a des octets ds le buffer
+            TabSerialIn.append(ser.read())
+            IsRx=1
+        
+        if (IsRx==1):
+            self.SerialStatus=Serial_NoError;
+            #test de longueur (premier octet est la longueur, mais il faut 
+            #ajouter +1 (le byte de chacksum) 
+        
+            longueur=st.unpack("B",TabSerialIn[0])[0] #attention unpack
+                                                #renvoie un tuple donc
+                                                #on cherche le premier élt [0]
+            if (len(TabSerialIn)==longueur+1):
+                self.SerialStatus=Serial_NoError;
+            else :
+                self.SerialStatus=Serial_ReceiveLongFail ;
+         
+            #test checksum    
+            if (self.SerialStatus==Serial_NoError):
+                CS_Sum=0
+                CS_Val = st.unpack("B",TabSerialIn[longueur])[0] 
+                #calcul du checksum
+                for i in range(0,longueur):
+                    CS_Sum=CS_Sum+st.unpack("B",TabSerialIn[i])[0]
+                    CS_Sum=CS_Sum&255 
+                if  (CS_Sum!= CS_Val):
+                    self.SerialStatus=Serial_ReceiveCheckSumFail
+            
+            #Mise à jour des clim data   
+            # ex 0x5 'T','o','t','o',CS
+            #     0   1   2   3   4   5
+            if (self.SerialStatus==Serial_NoError):
+                ClimList=TabSerialIn[1:longueur] # dernier élt exclu
+                Clim_Salon.Update(ClimList)
+                
+                ClimList=TabSerialIn[(1+24):(longueur+24)] # dernier élt exclu
+                Clim_SaM.Update(ClimList)
+                
+                ClimList=TabSerialIn[(1+2*24):(longueur+2*24)] # dernier élt exclu
+                Clim_Entree.Update(ClimList)
+                
+                ClimList=TabSerialIn[(1+3*24):(longueur+3*24)] # dernier élt exclu
+                Clim_Couloir.Update(ClimList)
+
+        
+        else: # Rx ne renvoie rien
+            self.SerialStatus=Serial_NoMssgFromSGw;
+        
+# création de la variable serial_data pour exploitation 
+# via d'autres modules
 serial_data = DFH_CentralData()
 
 
