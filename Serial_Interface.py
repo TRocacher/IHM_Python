@@ -9,7 +9,8 @@ from data_page import data_homepage, data_automode_blue,\
                         data_automode_white, data_automode_red,\
                         data_prog_blue, data_prog_white,\
                         data_prog_red, data_Hollidays,\
-                        Clim_Salon,Clim_SaM,Clim_Entree,Clim_Couloir
+                        Data_Clim_Salon,Data_Clim_SaM,\
+                        Data_Clim_Entree,Data_Clim_Couloir,Data_Ext
                         
 import struct as st # pour envoyer float, cad d'abord passer en byte
 
@@ -184,6 +185,8 @@ class DFH_CentralData:
         #pause pour laisser le tps SGw de calculer la réponse
         _time.sleep(0.5);
         
+        
+        
         #Lecture du buffer série (liste)
         TabSerialIn=[]
         IsRx=0
@@ -194,7 +197,7 @@ class DFH_CentralData:
         if (IsRx==1):
             self.SerialStatus=Serial_NoError;
             #test de longueur (premier octet est la longueur, mais il faut 
-            #ajouter +1 (le byte de chacksum) 
+            #ajouter +1 (le byte de checksum) 
         
             longueur=st.unpack("B",TabSerialIn[0])[0] #attention unpack
                                                 #renvoie un tuple donc
@@ -219,17 +222,24 @@ class DFH_CentralData:
             # ex 0x5 'T','o','t','o',CS
             #     0   1   2   3   4   5
             if (self.SerialStatus==Serial_NoError):
-                ClimList=TabSerialIn[1:longueur] # dernier élt exclu
-                Clim_Salon.Update(ClimList)
+                longueur=longueur-1  # longueur contient maintennt le nbre 
+                                        #d'octetes dela payload exemple 24*4+21
+                longExt=24     
+                long_DataClim=(longueur-longExt)//4; #exemple long_DataClim=24
+                ClimList=TabSerialIn[1:long_DataClim+1] # dernier élt exclu
+                Data_Clim_Salon.Update(ClimList)
                 
-                ClimList=TabSerialIn[(1+24):(longueur+24)] # dernier élt exclu
-                Clim_SaM.Update(ClimList)
+                ClimList=TabSerialIn[(1+long_DataClim):(2*long_DataClim+1)] # dernier élt exclu
+                Data_Clim_SaM.Update(ClimList)
                 
-                ClimList=TabSerialIn[(1+2*24):(longueur+2*24)] # dernier élt exclu
-                Clim_Entree.Update(ClimList)
+                ClimList=TabSerialIn[(1+2*long_DataClim):(3*long_DataClim+1)] # dernier élt exclu
+                Data_Clim_Entree.Update(ClimList)
                 
-                ClimList=TabSerialIn[(1+3*24):(longueur+3*24)] # dernier élt exclu
-                Clim_Couloir.Update(ClimList)
+                ClimList=TabSerialIn[(1+3*long_DataClim):(4*long_DataClim+1)] # dernier élt exclu
+                Data_Clim_Couloir.Update(ClimList)
+                
+                ClimList=TabSerialIn[(4*long_DataClim+1):(4*long_DataClim+1+longExt)] # dernier élt exclu
+                Data_Ext.Update(ClimList)
 
         
         else: # Rx ne renvoie rien

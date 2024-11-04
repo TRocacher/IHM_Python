@@ -16,7 +16,8 @@ class DataClim:
         self.time_hour = "00:00:00"         # string ex 12:48:51               
         self.time_Delay = "00j 00:00:00"     # string ex 03:12:48:51
                                             # pour 3jour 12h 48mn 51sec
-    
+        self.CurrentSetCode =Stop       # idem à NeWtempSet mais ici on garde le code
+        self.BeforeCmdeCode =Stop       #idem
         
     def Update(self,SerialList):
         #temperature
@@ -24,9 +25,10 @@ class DataClim:
         self.Temperature=st.unpack("<f", tempStr)[0]
         #NexTemp, pos 4
         self.NewTempSet = TempSet2Str(st.unpack("B", SerialList[4])[0])
-        
+        self.CurrentSetCode = st.unpack("B", SerialList[4])[0]
         #lasttmp cmde before nocmde, pos 5
         self.LastTempSetBeforeNoCmd = TempSet2Str(st.unpack("B", SerialList[5])[0])
+        self.BeforeCmdeCode = st.unpack("B", SerialList[5])[0]
         #Status, pos 6
         self.Status = Status2Str(st.unpack("B", SerialList[6])[0])
         #Status, pos 7
@@ -61,7 +63,46 @@ class DataClim:
         print(self.Status)
         print(self.BoostToken)
 
-
+# casse RmDvExt
+class DataRmDvExt:
+    
+    # === les attributs du RmDv Ext ===
+    def __init__(self):
+        self.Temperature = 0.0              #float
+        self.Status = "Pas de Warning"     #char
+        self.time_date = "00/00/00"         # string ex 01/01/20
+        self.time_hour = "00:00:00"         # string ex 12:48:51               
+        self.time_Delay = "00j 00:00:00"
+    
+    def Update(self,SerialList):
+        #temperature
+        tempStr=SerialList[0]+SerialList[1]+SerialList[2]+SerialList[3]
+        self.Temperature=st.unpack("<f", tempStr)[0]
+        #Status, pos 4
+        self.Status = Status2Str(st.unpack("B", SerialList[4])[0])
+        #Stamp RmDv pos 8 car en réalité status est 32 bits avec High à 0
+        # en effet 0 padding côté STM32 donc struct multiple de 4 bytes
+        tempStr=SerialList[8]+SerialList[9];sec = st.unpack("<H", tempStr)[0]
+        tempStr=SerialList[10]+SerialList[11];minute = st.unpack("<H", tempStr)[0]
+        tempStr=SerialList[12]+SerialList[13]; heure = st.unpack("<H", tempStr)[0]
+        tempStr=SerialList[14]+SerialList[15];jour = st.unpack("<H", tempStr)[0]
+        tempStr=SerialList[16]+SerialList[17];mois = st.unpack("<H", tempStr)[0]
+        tempStr=SerialList[18]+SerialList[19];annee = st.unpack("<H", tempStr)[0]
+        self.time_hour=str(heure)+":"+str(minute)+":"+str(sec)
+        self.time_date=str(jour)+"/"+str(mois)+"/"+str(annee)
+                
+        #intervalle #pos 17
+        tempStr=SerialList[20]+SerialList[21]+SerialList[22]+SerialList[23]
+        total_sec = st.unpack("<I", tempStr)[0]
+        jour = total_sec // (3600*24)
+        reste = total_sec  - jour*3600*24
+        heure = reste //3600
+        reste = reste-heure*3600
+        minute = reste//60
+        reste = reste-minute*60
+        seconde = reste
+        self.time_Delay =str(jour)+"j,"+str(heure)+":"+str(minute)+":"+str(seconde)    
+    
 # === classe qui regroupe les variables de la homepage ===
 
 class DataHomePage:
@@ -200,10 +241,11 @@ data_prog_red = DataParamProg()
 data_Hollidays = DataParamHollidays()
 
 #les clim
-Clim_Salon=DataClim()
-Clim_SaM=DataClim()
-Clim_Entree=DataClim()
-Clim_Couloir=DataClim()
+Data_Clim_Salon=DataClim()
+Data_Clim_SaM=DataClim()
+Data_Clim_Entree=DataClim()
+Data_Clim_Couloir=DataClim()
+Data_Ext=DataRmDvExt()
 
 # =================== Test unitaire=================================  
 if __name__ == "__main__" :

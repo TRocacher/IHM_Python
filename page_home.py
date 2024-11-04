@@ -6,7 +6,11 @@ from IHM_Global import *
 from data_page import data_homepage, data_automode_blue,\
                         data_automode_white, data_automode_red,\
                         data_prog_blue, data_prog_white,\
-                        data_prog_red, data_Hollidays
+                        data_prog_red, data_Hollidays,\
+                        Data_Clim_Salon,Data_Clim_SaM, Data_Clim_Entree, \
+                        Data_Clim_Couloir,Data_Ext
+
+                      
 import tkinter as tk  # tk est l'alias du module tkinder 
 
 from Serial_Interface import serial_data
@@ -18,17 +22,17 @@ class PageHome(tk.Tk):
     LARG_FRAME_POW_PIX = 260
     HAUT_FRAME_POW_PIX = 135
     POSX_FRAME_POW_PIX = 20
-    POSY_FRAME_POW_PIX = 100
+    POSY_FRAME_POW_PIX = 65
     #frame mode
     LARG_FRAME_MODE_PIX = 190
-    HAUT_FRAME_MODE_PIX = 37
-    POSX_FRAME_MODE_PIX = 500
-    POSY_FRAME_MODE_PIX = 100
+    HAUT_FRAME_MODE_PIX = 40 #37
+    POSX_FRAME_MODE_PIX = 20
+    POSY_FRAME_MODE_PIX = 15
     #frame option
     LARG_FRAME_OPT = 190
     HAUT_FRAME_OPT = 80
-    POSX_FRAME_OPT = 500
-    POSY_FRAME_OPT = 200
+    POSX_FRAME_OPT = 20
+    POSY_FRAME_OPT = 210
     
     #frame output
     LARG_FRAME_OUTPUT = 760
@@ -36,8 +40,14 @@ class PageHome(tk.Tk):
     POSX_FRAME_OUTPUT = 20
     POSY_FRAME_OUTPUT = 300   
     
-    #temop couleur
-    POSX_TEMPO = 300
+    #frame Climatisations
+    LARG_FRAME_CLIM = 250
+    HAUT_FRAME_CLIM = 170
+    POSX_FRAME_CLIM = 450
+    POSY_FRAME_CLIM= 100 
+    
+    #tempo couleur
+    POSX_TEMPO = 600
     POSY_TEMPO = 20
     
    
@@ -96,9 +106,9 @@ class PageHome(tk.Tk):
      
         # --Labels Date and Hour--
         self.label_date = tk.Label(self, text=data_homepage.time_date,width=30, height=1)
-        self.label_date.place(x=400, y=50) 
+        self.label_date.place(x=300, y=20) 
         self.label_hour = tk.Label(self, text=data_homepage.time_hour, width=30, height=1)
-        self.label_hour.place(x=400, y=75) 
+        self.label_hour.place(x=300, y=50) 
 
         # ==========    FRAME PUISSANCE     ============        
         # --Affichage infos puissance --
@@ -150,6 +160,33 @@ class PageHome(tk.Tk):
         self.label_output=tk.Label(self.frame_output , text="Hello", width = 80, bg = "white", anchor ="w")
         self.label_output.place(x=5, y=5)
         
+        # ==========    FRAME CLIM  ============ 
+        self.frame_CLIM = tk.Frame(self, width=self.LARG_FRAME_CLIM, height=self.HAUT_FRAME_CLIM, \
+                                    borderwidth=3,relief='groove',bg=COLOUR_FRAME)
+        self.frame_CLIM.place(x=self.POSX_FRAME_CLIM, y=self.POSY_FRAME_CLIM)
+        
+        self.label_SalonTemp=tk.Label(self.frame_CLIM, text="Salon : "+str(round(Data_Clim_Salon.Temperature,1))+" °C", bg=COLOUR_FRAME)
+        self.label_SalonTemp.place(x=10, y=10) 
+        self.label_SalonClim=tk.Label(self.frame_CLIM, text="Clim  : "+str(Data_Clim_Salon.NewTempSet), bg=COLOUR_FRAME)
+        self.label_SalonClim.place(x=10, y=30)
+        
+        self.label_SaMTemp=tk.Label(self.frame_CLIM, text="SàM   : "+str(round(Data_Clim_SaM.Temperature,1))+" °C", bg=COLOUR_FRAME)
+        self.label_SaMTemp.place(x=130, y=10) 
+        self.label_SaMClim=tk.Label(self.frame_CLIM, text="Clim  : "+str(Data_Clim_SaM.NewTempSet), bg=COLOUR_FRAME)
+        self.label_SaMClim.place(x=130, y=30)
+        
+        self.label_EntreeTemp=tk.Label(self.frame_CLIM, text="Entrée : "+str(round(Data_Clim_Entree.Temperature,1))+" °C", bg=COLOUR_FRAME)
+        self.label_EntreeTemp.place(x=10, y=10+50) 
+        self.label_EntreeClim=tk.Label(self.frame_CLIM, text="Clim   : "+str(Data_Clim_Entree.NewTempSet), bg=COLOUR_FRAME)
+        self.label_EntreeClim.place(x=10, y=30+50)
+        
+        self.label_CouloirTemp=tk.Label(self.frame_CLIM, text="Couloir : "+str(round(Data_Clim_Couloir.Temperature,1))+" °C", bg=COLOUR_FRAME)
+        self.label_CouloirTemp.place(x=130, y=10+50) 
+        self.label_CouloirClim=tk.Label(self.frame_CLIM, text= "Clim    : "+str(Data_Clim_Couloir.NewTempSet), bg=COLOUR_FRAME)
+        self.label_CouloirClim.place(x=130, y=30+50)   
+
+        self.label_ExtTemp=tk.Label(self.frame_CLIM, text="Température extérieure : "+str(round(Data_Ext.Temperature,1))+" °C", bg=COLOUR_FRAME)
+        self.label_ExtTemp.place(x=10, y=10+120) 
 
 # ======================== Méthode de mise à jour des champs de la fenêtre ... ========================
     def update_time(self):
@@ -179,8 +216,22 @@ class PageHome(tk.Tk):
         # mise à jour du message
         print(data_homepage.message+"update")
         self.label_output.config(text=data_homepage.message)
-    
-    
+        
+    def update_ClimInfo(self):
+        self.label_SalonTemp.config( text="Salon : "+str(round(Data_Clim_Salon.Temperature,1))+" °C")
+        self.label_SalonClim.config( text="Clim  : "+MssgTempClim(Data_Clim_Salon))
+        
+        self.label_SaMTemp.config( text="SàM   : "+str(round(Data_Clim_SaM.Temperature,1))+" °C")
+        self.label_SaMClim.config( text="Clim  : "+MssgTempClim(Data_Clim_SaM))
+        
+        self.label_EntreeTemp.config( text="Entrée : "+str(round(Data_Clim_Entree.Temperature,1))+" °C")
+        self.label_EntreeClim.config( text="Clim   : "+MssgTempClim(Data_Clim_Entree))
+        
+        self.label_CouloirTemp.config( text="Couloir : "+str(round(Data_Clim_Couloir.Temperature,1))+" °C")
+        self.label_CouloirClim.config( text= "Clim    : "+MssgTempClim(Data_Clim_Couloir))
+        
+        self.label_ExtTemp.config( text="Température extérieure : "+str(round(Data_Ext.Temperature,1))+" °C")
+        
 # ======================== Méthode de mise à jour de data_homepage ... ========================
    
     
@@ -225,7 +276,7 @@ class PageHome(tk.Tk):
         #--top boutons--
         button_back = tk.Button(win_paramauto, text="Retour", width=13, height=1 , command=win_paramauto.destroy)
         button_back.place(x=5, y=0)
-        button_confirm = tk.Button(win_paramauto, text="Confirmer", width=13, height=1 , command=self.win_paramauto_confirm)
+        button_confirm = tk.Button(win_paramauto, text="Confirmer", width=13, height=1 , command=lambda: [self.win_paramauto_confirm(),win_paramauto.destroy()])
         button_confirm.place(x=140, y=0)
         # Les 3 frames principames de saisies param auto
         self.frame_auto_blue=FrameModeAuto(win_paramauto,16,100, "Couleur Tempo bleu", COLOUR_BLUE,data_automode_blue)
@@ -270,7 +321,7 @@ class PageHome(tk.Tk):
         #--top boutons--
         button_back = tk.Button(win_paramprog, text="Retour", width=13, height=1 , command=win_paramprog.destroy)
         button_back.place(x=5, y=0)
-        button_confirm = tk.Button(win_paramprog, text="Confirmer", width=13, height=1 , command=self.win_paramprog_confirm)
+        button_confirm = tk.Button(win_paramprog, text="Confirmer", width=13, height=1 , command=lambda:[self.win_paramprog_confirm(),win_paramprog.destroy()])
         button_confirm.place(x=140, y=0)
         # Les 3 frames principames de saisies param prog
         self.frame_prog_blue=FrameModeProg(win_paramprog,16,50, "Heures bleue", COLOUR_BLUE,data_prog_blue)
@@ -282,8 +333,7 @@ class PageHome(tk.Tk):
         data_prog_blue.update(self.frame_prog_blue.get_tab_temp())
         data_prog_white.update(self.frame_prog_white.get_tab_temp())
         data_prog_red.update(self.frame_prog_red.get_tab_temp())
-
-
+      
 
 # **** fenêtre toplevel win_hollidays **** 
     def create_win_param_hollidays(self):
@@ -325,13 +375,30 @@ class PageHome(tk.Tk):
         serial_data.sendto_smartgateway()
         data_homepage.message =" fin connection gateway"
         self.update_outputmessage()
+        self.update_ClimInfo()
 
     def butdiag_callback(self):
         win_diag_creation(self)
 
 
+def CodeTempSet2Str(cmde):
+    LocalStr=""
+    if (cmde == Chaud_18_VanBas_FanAuto) :LocalStr="18°C"
+    elif  (cmde == Chaud_19_VanBas_FanAuto) :LocalStr="19°C"
+    elif  (cmde == Chaud_20_VanBas_FanAuto) :LocalStr="20°C"
+    elif  (cmde == Chaud_21_VanBas_FanAuto) :LocalStr="21°C"
+    elif  (cmde == Chaud_22_VanBas_FanAuto) :LocalStr="22°C"
+    elif  (cmde == Chaud_23_VanBas_FanAuto) :LocalStr="23°C"
+    elif  (cmde == NoCommandToSend) :LocalStr="Pas"
+    elif  (cmde == Stop) :LocalStr="Arrêt"
+    else : LocalStr="Code cmde erroné"
+    return LocalStr
 
-
+def MssgTempClim(LocalClimData):
+        if (LocalClimData.CurrentSetCode==NoCommandToSend):
+            Mssg=CodeTempSet2Str(LocalClimData.BeforeCmdeCode)
+        else : Mssg=CodeTempSet2Str(LocalClimData.CurrentSetCode)
+        return Mssg
 # =================== Test unitaire=================================
 
   

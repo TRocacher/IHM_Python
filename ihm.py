@@ -104,9 +104,9 @@ def updatelabel_tempoEDF():
 def transaction_SGw():
     win_home.after(Update_Serial_PER ,transaction_SGw)
     serial_data.sendto_smartgateway()
+    win_home.update_ClimInfo()
     
-def UpdateLabel_Clim():
-    pass
+
 
 def updatetimedata():
     win_home.after(UPDATE_TIME_PER ,updatetimedata)
