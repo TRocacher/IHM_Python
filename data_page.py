@@ -2,6 +2,10 @@ from IHM_Global import *
 from datetime import date,timedelta
 import struct as st 
 
+
+
+
+
 # === classe qui permettra d'instancier les 4 clim de la maison ===
 class DataClim:
     
@@ -246,6 +250,8 @@ Data_Clim_SaM=DataClim()
 Data_Clim_Entree=DataClim()
 Data_Clim_Couloir=DataClim()
 Data_Ext=DataRmDvExt()
+
+
 
 # =================== Test unitaire=================================  
 if __name__ == "__main__" :

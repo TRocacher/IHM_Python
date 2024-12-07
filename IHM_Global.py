@@ -31,6 +31,7 @@ Chaud_20_VanBas_FanAuto = 195
 Chaud_21_VanBas_FanAuto = 196
 Chaud_22_VanBas_FanAuto = 197
 Chaud_23_VanBas_FanAuto = 198
+
 NoCommandToSend = 199
 Stop = 192
 

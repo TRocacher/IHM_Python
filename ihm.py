@@ -1,7 +1,7 @@
 # ATTENTION PLANTAGE si erreur d'adressage IP 10 et pas 11 ou l'inverse
 # le try catch doit être amélioré
 
-#Version 2.0
+#Version 2.00 : récupération pile fonction pour diag
 #Retour info clim OK, voir ToDo pour la suite...
 
 from IHM_Global import *
@@ -9,6 +9,7 @@ from page_home import PageHome
 from data_page import data_homepage
 from time import strftime
 from Serial_Interface import serial_data
+from Serial_Interface  import InitSerialPort
 
 import tkinter as tk
 import requests
@@ -123,7 +124,7 @@ def updatetimedata():
 
 # Genération de la fenêtre principale
 win_home = PageHome()
-
+InitSerialPort();
 
 updatepowdata()
 updatelabel_tempoEDF()

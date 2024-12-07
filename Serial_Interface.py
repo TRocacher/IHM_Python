@@ -14,7 +14,29 @@ from data_page import data_homepage, data_automode_blue,\
                         
 import struct as st # pour envoyer float, cad d'abord passer en byte
 
-           
+def Encapsulation(ArgTrame):
+     # encapsulaiton longueur    
+    l=len(ArgTrame)+1 # on inclut le checksum
+    trame_l=st.pack("<B",l)
+    trame=trame_l+ArgTrame # Trame =|L|...data...|
+                        #        |0  ....  L-1|
+    #calcul checksum
+    checksum=0
+    for i in range(0,l): # de 0 à L exclu
+        checksum=checksum+trame[i]
+    checksum=checksum%256
+    trame_sum=st.pack("<B",checksum)
+    trame=trame+trame_sum
+    return trame
+
+
+def InitSerialPort():
+    #Ouverture du port série
+    global ser # déclaration globale du futur port séri
+    ser = serial.Serial(port='/dev/serial0',baudrate=9600, timeout=1)
+    ser.flushInput(); #vider le buffer 
+    _time.sleep(0.5); #????
+         
                 
 class DFH_CentralData:
     def __init__(self): 
@@ -59,6 +81,8 @@ class DFH_CentralData:
         
         self.serial_dataparamauto = data_automode_blue
         self.serial_dataparamprog = data_prog_blue
+        
+
  
     def update_bufferdata(self):
         # Time struct 12 octets
@@ -120,9 +144,7 @@ class DFH_CentralData:
         self.Option[3] = data_homepage.tempo
 
     def sendto_smartgateway(self):
-        ser = serial.Serial(port='/dev/serial0',baudrate=9600, timeout=1)
-        ser.flushInput(); #vider le buffer 
-        _time.sleep(0.5); #????
+        ser.flushInput();
         
         self.update_bufferdata()
         # Time struct 12 octets
@@ -165,23 +187,24 @@ class DFH_CentralData:
         trame = trame+st.pack("B",self.Option[3]) 
 
         
-        
-        # encapsulaiton longueur    
-        l=len(trame)+1 # on inclut le checksum
-        trame_l=st.pack("<B",l)
-        trame=trame_l+trame # Trame =|L|...data...|
-                    #        |0  ....  L-1|
-                     
-        #calcul checksum
-        checksum=0
-        for i in range(0,l): # de 0 à L exclu
-            checksum=checksum+trame[i]
-        checksum=checksum%256
-        trame_sum=st.pack("<B",checksum)
-        trame=trame+trame_sum
+        trame_finale=Encapsulation(trame) 
+        # # encapsulaiton longueur    
+        # l=len(trame)+1 # on inclut le checksum
+        # trame_l=st.pack("<B",l)
+        # trame=trame_l+trame # Trame =|L|...data...|
+                    # #        |0  ....  L-1|
+                    
+                    
+        # #calcul checksum
+        # checksum=0
+        # for i in range(0,l): # de 0 à L exclu
+            # checksum=checksum+trame[i]
+        # checksum=checksum%256
+        # trame_sum=st.pack("<B",checksum)
+        # trame=trame+trame_sum
         
         #emission...
-        ser.write(trame)
+        ser.write(trame_finale)
         #pause pour laisser le tps SGw de calculer la réponse
         _time.sleep(0.5);
         
@@ -245,9 +268,40 @@ class DFH_CentralData:
         else: # Rx ne renvoie rien
             self.SerialStatus=Serial_NoMssgFromSGw;
         
+  
+        
+class Diag_SerialData:
+    def __init__(self): 
+        self.code="Diag"
+        
+    def ask_diag_to_SGw(self): 
+        ser.flushInput();
+        trame='Diag'.encode('utf-8')
+        trame_finale=Encapsulation(trame)  
+        ser.write(trame_finale)
+        #pause pour laisser le tps SGw de calculer la réponse
+        _time.sleep(0.5);
+        
+        #Lecture du buffer série (liste)
+        
+        TabSerialIn=[]
+        IsRx=0
+        i=0;
+        DiagStr=""
+        while (ser.inWaiting()>0): #tant qu'il y a des octets ds le buffer
+            TabSerialIn.append(ser.read()) 
+            DiagStr=DiagStr+TabSerialIn[i].decode('utf-8') 
+            i=i+1
+            IsRx=1
+        
+        #Data_Diag.Update(DiagStr)
+        return DiagStr
+        
+        
 # création de la variable serial_data pour exploitation 
 # via d'autres modules
 serial_data = DFH_CentralData()
+diag_SerData = Diag_SerialData()
 
 
 

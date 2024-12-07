@@ -13,7 +13,7 @@ from data_page import data_homepage, data_automode_blue,\
                       
 import tkinter as tk  # tk est l'alias du module tkinder 
 
-from Serial_Interface import serial_data
+from Serial_Interface import serial_data,diag_SerData 
 
 
 # ===================== fenêtre principale =============================
@@ -378,7 +378,7 @@ class PageHome(tk.Tk):
         self.update_ClimInfo()
 
     def butdiag_callback(self):
-        win_diag_creation(self)
+        win_diag_creation(self,diag_SerData.ask_diag_to_SGw())
 
 
 def CodeTempSet2Str(cmde):
