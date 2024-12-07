@@ -1,7 +1,7 @@
 # ATTENTION PLANTAGE si erreur d'adressage IP 10 et pas 11 ou l'inverse
 # le try catch doit être amélioré
 
-#Version 2.00 : récupération pile fonction pour diag
+#Version 2.02 : récupération pile fonction pour diag
 #Retour info clim OK, voir ToDo pour la suite...
 
 from IHM_Global import *
