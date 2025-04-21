@@ -1,7 +1,7 @@
 from IHM_Global import *
 from datetime import date,timedelta
 import struct as st 
-
+import numpy as np # pour l'écriture de fichiers de sauvegarde
 
 
 
@@ -176,16 +176,29 @@ class DataParamAuto:
 
 
 class DataParamProg:
-    def __init__(self):
+    def __init__(self, CouleurTempo):
 
-        
-        #self.TempPerHour = {"6h":temp_6h,"8h":temp_8h,"10h":temp_10h,"15h":temp_10h,"17h":temp_10h,"22h":temp_22h} 
-        self.TempPerHour =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        # 17 10 24 modifié 17 par 19 en état init
+        #Modif Avril 25
+        if CouleurTempo==Tempo_Bleu :
+                self.FileName="ProgTemp_Blue.npy"
+        elif CouleurTempo==Tempo_Blanc :
+                self.FileName="ProgTemp_White.npy"
+        else: #red
+                self.FileName="ProgTemp_Red.npy"
+                
+        try:
+                self.TempPerHour= np.load(self.FileName)
+        except Exception: #le fichier n'existe pas
+                print("le fichier n'existe pas")
+                self.TempPerHour= [19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19]     
+       
     def update(self,temp_per_hour):
         for i in range(0,24):
             self.TempPerHour[i]=temp_per_hour[i]
-            
+        #Sauvegarde fichier
+        np.save(self.FileName,self.TempPerHour)    
+        
+        #Fin Modif Avril 25
         
 class DataParamHollidays:
     def __init__(self):
@@ -239,9 +252,9 @@ data_homepage=DataHomePage()
 data_automode_blue=DataParamAuto()
 data_automode_white=DataParamAuto()
 data_automode_red=DataParamAuto()
-data_prog_blue = DataParamProg()
-data_prog_white = DataParamProg()
-data_prog_red = DataParamProg()
+data_prog_blue = DataParamProg(Tempo_Bleu) #Modif Avril 25
+data_prog_white = DataParamProg(Tempo_Blanc) #Modif Avril 25
+data_prog_red = DataParamProg(Tempo_Rouge) #Modif Avril 25
 data_Hollidays = DataParamHollidays()
 
 #les clim

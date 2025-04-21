@@ -1,7 +1,15 @@
 # ATTENTION PLANTAGE si erreur d'adressage IP 10 et pas 11 ou l'inverse
 # le try catch doit être amélioré
 
-#Version 2.02 : récupération pile fonction pour diag
+#VERSION 3.00 :
+# - Lancement automatique application au boot (fichier Autostart 
+#       + script bash)
+# - fichiers de backup (3 en tout) pour sauver les configs de température
+#   en mode programmation, voir data-page.py l181 - l201 + 
+#   l255 - 257
+
+
+#Old Version 2.02 : récupération pile fonction pour diag
 #Retour info clim OK, voir ToDo pour la suite...
 
 from IHM_Global import *
